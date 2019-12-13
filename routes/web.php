@@ -14,3 +14,10 @@
 $router->get('/', function () use ($router) {
     return $router->app->version();
 });
+
+$router->group(["prefix" => "api"], function() use($router) {
+    $router->post('/auth/register', ['uses' => 'AuthController@register']);
+});
+
+$router->group(["prefix" => "api", 'middleware' => 'jwt.auth'], function() use($router) {
+});
