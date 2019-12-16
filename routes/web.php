@@ -17,6 +17,8 @@ $router->get('/', function () use ($router) {
 
 $router->group(["prefix" => "api"], function() use($router) {
     $router->post('/auth/register', ['uses' => 'AuthController@register']);
+    $router->post('/auth/verifyCode', ['uses' => 'AuthController@verifyCode']);
+    $router->post('/auth/login', ['uses' => 'AuthController@login']);
 });
 
 $router->group(["prefix" => "api", 'middleware' => 'jwt.auth'], function() use($router) {

@@ -20,7 +20,7 @@ class Users extends Migration
             $table->string('last_name');
             $table->string('username');
             $table->string('email');
-            $table->string('avatar');
+            $table->string('avatar')->default("profile.png");
             $table->timestamp('dob');
             $table->string('password');
             $table->string('id_code');
