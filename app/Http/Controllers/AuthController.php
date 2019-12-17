@@ -44,7 +44,7 @@ class AuthController extends Controller
             $data = $request->all();
             $this->validateData($data, ["id_code" => "required", "email" => "required"]);
             if(User::where("email", $data["email"])->where("id_code", $data["id_code"])->first()){
-                User::where("username", $data["username"])->where("id_code", $data["id_code"])->update(["status" => 1]);
+                User::where("email", $data["email"])->where("id_code", $data["id_code"])->update(["status" => 1]);
                 return $this->sendCustomResponse("Account verified", 200);
             }
             return $this->errorArray("Invalid verification code", 400);
@@ -72,7 +72,7 @@ class AuthController extends Controller
                // user is pending redirect to second step
                return $this->sendCustomResponse("Please verify account", 302);
            }
-           return $this->sendData([ "user" => ["access_token" => $token] ]);
+           return $this->sendData(["access_token" => $token]);
 
         } catch(ValidationException $ex){
             return $this->validationError($ex);
@@ -81,5 +81,38 @@ class AuthController extends Controller
         }catch (\Exception $ex) {
             return $this->errorArray($ex->getMessage());
         } 
+    }
+
+    public function facebookLogin(Request $request){
+        try {
+            $data = $request->all();
+            $this->validateData($data, ["access_token" => "required"]);
+            return $this->sendData($data["access_token"], 200);
+        //    return $this->errorArray("Invalid verification code", 400);
+        } catch(ValidationException $ex){
+            return $this->validationError($ex);
+        }catch (\Exception $ex) {
+            return $this->errorArray($ex->getMessage());
+        }
+    }
+
+    public function authMe(Request $request){
+        try {
+            $data = $request->all();
+            $user = $this->getAuthenticatedUser();
+            return $this->sendData(["id" => $user["uuid"]], 200);
+        }catch (\Exception $ex) {
+            return $this->errorArray($ex->getMessage());
+        }
+    }
+
+    public function logout()
+    {
+        try {
+            JWTAuth::invalidate(JWTAuth::getToken());
+            return $this->sendData("logout successfully", 200);
+        }catch (\Exception $ex) {
+            return $this->errorArray($ex->getMessage());
+        }
     }
 }

@@ -19,7 +19,10 @@ $router->group(["prefix" => "api"], function() use($router) {
     $router->post('/auth/register', ['uses' => 'AuthController@register']);
     $router->post('/auth/verifyCode', ['uses' => 'AuthController@verifyCode']);
     $router->post('/auth/login', ['uses' => 'AuthController@login']);
+    $router->post('/auth/social/facebook', ['uses' => 'AuthController@facebookLogin']);
 });
 
 $router->group(["prefix" => "api", 'middleware' => 'jwt.auth'], function() use($router) {
+    $router->get('/auth/me', ['uses' => 'AuthController@authMe']);
+    $router->post('/auth/logout', ['uses' => 'AuthController@logout']);
 });

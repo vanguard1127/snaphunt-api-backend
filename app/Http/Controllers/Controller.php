@@ -6,6 +6,7 @@ use Exception;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 use Laravel\Lumen\Routing\Controller as BaseController;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 class Controller extends BaseController
 {
@@ -16,7 +17,7 @@ class Controller extends BaseController
 
     public function sendData($data = null, $status = 200)
     {
-        return response(["data" => $data], $status);
+        return response( $data, $status);
     }
 
     public function errorArrayWithKey($key = "exception", $msg = "Something went wrong, Please try again", $status = 400)
@@ -42,6 +43,23 @@ class Controller extends BaseController
 
     public function fourDigitCode($x){
         return substr(str_shuffle("0123456789"), 0, $x);
+    }
+
+    public function getAuthenticatedUser()
+    {
+        try {
+            if (!$user = JWTAuth::parseToken()->authenticate()) {
+                return $this->errorArray('user not found');
+            }
+        } catch (Tymon\JWTAuth\Exceptions\TokenExpiredException $e) {
+            return $this->errorArray('token expired');
+        } catch (Tymon\JWTAuth\Exceptions\TokenInvalidException $e) {
+            return $this->errorArray('invalid token');
+        } catch (Tymon\JWTAuth\Exceptions\JWTException $e) {
+            return $this->errorArray('token absent');
+        }
+        // the token is valid and we have found the user via the sub claim
+        return $user;
     }
 
 }
