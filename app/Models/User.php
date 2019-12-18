@@ -20,7 +20,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
      * @var array
      */
     protected $fillable = [
-        'first_name', 'last_name', 'username', 'email', 'avatar', 'dob', 'password', 'id_code', 'avatar'
+        'first_name', 'last_name', 'username', 'email', 'avatar', 'dob', 'password', 'id_code', "fb_access_token", "fb_id"
     ];
 
     public static $signUpRules = [ 

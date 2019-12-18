@@ -7,7 +7,9 @@
     "require": {
         "php": "^7.2",
         "barryvdh/laravel-cors": "^0.11.4",
+        "doctrine/dbal": "^2.10",
         "flipbox/lumen-generator": "^6.0",
+        "guzzlehttp/guzzle": "^6.5",
         "illuminate/mail": "5.*",
         "laravel/lumen-framework": "^5.0",
         "ramsey/uuid": "^3.9",

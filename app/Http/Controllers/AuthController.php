@@ -86,8 +86,12 @@ class AuthController extends Controller
     public function facebookLogin(Request $request){
         try {
             $data = $request->all();
-            $this->validateData($data, ["access_token" => "required"]);
-            return $this->sendData($data["access_token"], 200);
+            $this->validateData($data, ["accessToken" => "required"]);
+            $endpoint = "/me?fields=email,first_name,last_name,id,name,birthday";
+            $resp = $this->fbGetRequest($data["accessToken"], $endpoint);
+            if($token = $this->processFbData($resp, $data["accessToken"])){
+                return $this->sendData(["access_token" => $token], 200);
+            }
         //    return $this->errorArray("Invalid verification code", 400);
         } catch(ValidationException $ex){
             return $this->validationError($ex);
