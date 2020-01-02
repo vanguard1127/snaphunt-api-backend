@@ -27,5 +27,6 @@ $router->group(["prefix" => "api", 'middleware' => 'jwt.auth'], function() use($
     $router->get('/user/settings', ['uses' => 'UserSettingsController@getSettings']);
     $router->get('/profile', ['uses' => 'ProfileController@getProfile']);
     $router->post('/auth/logout', ['uses' => 'AuthController@logout']);
+    $router->post('/save/challenge', ['uses' => 'ChallengeController@saveChallenge']);
     $router->post('/user/updateSettings', ['uses' => 'UserSettingsController@updateSettings']);
 });

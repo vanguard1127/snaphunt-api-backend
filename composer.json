@@ -12,6 +12,7 @@
         "guzzlehttp/guzzle": "^6.5",
         "illuminate/mail": "5.*",
         "laravel/lumen-framework": "^5.0",
+        "league/flysystem-aws-s3-v3": "^1.0",
         "ramsey/uuid": "^3.9",
         "tymon/jwt-auth": "^1.0@dev"
     },
