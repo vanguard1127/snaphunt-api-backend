@@ -64,5 +64,9 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     {
         return [];
     }
+
+    public function challenges(){
+        return $this->hasMany("App\Models\ChallengeModel", "owner_id", "uuid");
+    }
     
 }

@@ -4,19 +4,21 @@ namespace App\Http\Controllers;
 
 use App\Models\ChallengeModel;
 use App\Traits\ChallengeTrait;
+use App\Traits\MediaTrait;
 use Illuminate\Http\Request;
 
 class ChallengeController extends Controller
 {
-    use ChallengeTrait;
+    use ChallengeTrait, MediaTrait;
 
     public function saveChallenge(Request $request){
         try {
             $data = $request->all();
             $user = $this->getAuthenticatedUser();
-            $this->validateData($data, ChallengeModel::$createChallengeRules);
-            if($mediaName = $this->uploadToS3($data["media"])){
-                $data["media"] = $mediaName;
+            // $this->validateData($data, ChallengeModel::$createChallengeRules);
+            if($mediaNames = $this->uploadToS3($data["media"], $data["post_type"])){
+                $data["media"] = $mediaNames["media_name"];
+                $data["thumb"] = $mediaNames["thumb_name"];
                 ChallengeModel::createChallenge($data, $user["uuid"]);
                 return $this->sendCustomResponse("Challenge created", 200);
             }
@@ -24,7 +26,7 @@ class ChallengeController extends Controller
         } catch(ValidationException $ex){
             return $this->validationError($ex);
         }catch (\Exception $ex) {
-            return $this->errorArray($ex->getMessage());
+            return $this->errorArray($ex->getMessage().$ex->getLine().$ex->getFile());
         }
     }
 }

@@ -11,9 +11,12 @@
         "flipbox/lumen-generator": "^6.0",
         "guzzlehttp/guzzle": "^6.5",
         "illuminate/mail": "5.*",
+        "intervention/image": "^2.5",
         "laravel/lumen-framework": "^5.0",
         "league/flysystem-aws-s3-v3": "^1.0",
+        "php-ffmpeg/php-ffmpeg": "^0.14.0",
         "ramsey/uuid": "^3.9",
+        "ramsey/uuid-doctrine": "^1.5",
         "tymon/jwt-auth": "^1.0@dev"
     },
     "require-dev": {
