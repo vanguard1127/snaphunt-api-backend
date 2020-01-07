@@ -24,6 +24,10 @@ trait MediaTrait{
         $video->gif(TimeCode::fromSeconds(2), new Dimension(200, 200), 3)->save(storage_path("app/uploads/gifs/").$gifName);
         return $gifName;
     }
+
+    public function getFullURL($media){
+        return env("S3_PATH").$media;
+    }
 }
 
 ?>

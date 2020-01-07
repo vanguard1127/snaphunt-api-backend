@@ -24,11 +24,15 @@ class ChallengeModel extends Model
         "thumb"
     ];
 
+    public function owner(){
+        return $this->hasOne("App\Models\User", "uuid", "owner_id");
+    }
+
     public static $createChallengeRules = [
-        "media" => "required",
         "category" => "required",
         "privacy" => "required",
-        "post_type" => "required"
+        "post_type" => "required",
+        // "media" => "required"
     ];
 
     public static function createChallenge($data, $userId){
