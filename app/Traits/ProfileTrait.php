@@ -12,7 +12,9 @@ trait ProfileTrait{
                 "claps" => 93,
                 "avatar" => $this->getFullURL($owner["avatar"]),
                 "thumb" => $this->getFullURL($challenge["thumb"]),
-                "desc" => $challenge["description"]
+                "media" => $this->getFullURL($challenge["media"]),
+                "desc" => $challenge["description"],
+                "post_type" => $challenge["post_type"]
             ];
         }
         return $resp;
