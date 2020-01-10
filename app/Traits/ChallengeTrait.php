@@ -2,6 +2,7 @@
 namespace App\Traits;
 
 use App\Models\ChallengeModel;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 
 trait ChallengeTrait{
@@ -27,6 +28,7 @@ trait ChallengeTrait{
             Storage::disk('s3')->put($mediaName, file_get_contents($media), "public");
             return [ "media_name" => $mediaName, "thumb_name" => $thumbName ];
         }catch(\Exception $ex){
+            Log::info($ex);
             throw $ex;
           //  return $ex->getMessage();
            // return false;
