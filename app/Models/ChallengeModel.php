@@ -28,6 +28,10 @@ class ChallengeModel extends Model
         return $this->hasOne("App\Models\User", "uuid", "owner_id");
     }
 
+    public function claps(){
+        return $this->hasMany("App\Models\Claps", "post_id", "uuid");
+    }
+
     public static $createChallengeRules = [
         "category" => "required",
         "privacy" => "required",

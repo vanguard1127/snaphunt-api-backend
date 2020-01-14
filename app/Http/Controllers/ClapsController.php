@@ -12,10 +12,14 @@ class ClapsController extends Controller
             $data = $request->all();
             $this->validateData($data, Claps::$addClapRules);
             $user = $this->getAuthenticatedUser();
-            if(Claps::addClap($data["post_id"], $user["id"])){
-                return $this->sendCustomResponse("Clap Added", 200);
+            if(Claps::where("post_id", $data["post_id"])->where("user_id", $user["uuid"])->first()){
+                // remove clap
+                Claps::where("post_id", $data["post_id"])->where("user_id", $user["uuid"])->delete();
+            }else{
+                Claps::addClap($data["post_id"], $user["uuid"]);
             }
-            return $this->errorArray();
+            return $this->sendCustomResponse("Clap Added", 200);
+            //return $this->errorArray();
         } catch(ValidationException $ex){
             return $this->validationError($ex);
         }catch (\Exception $ex) {

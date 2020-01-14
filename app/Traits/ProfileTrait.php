@@ -14,7 +14,9 @@ trait ProfileTrait{
                 "thumb" => $this->getFullURL($challenge["thumb"]),
                 "media" => $this->getFullURL($challenge["media"]),
                 "desc" => $challenge["description"],
-                "post_type" => $challenge["post_type"]
+                "post_type" => $challenge["post_type"],
+                "claps" => $challenge->claps->count(),
+                "uuid" => $challenge["uuid"]
             ];
         }
         return $resp;

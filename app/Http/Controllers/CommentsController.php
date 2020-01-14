@@ -12,7 +12,7 @@ class CommentsController extends Controller
             $data = $request->all();
             $this->validateData($data, Comments::$addCommentRules);
             $user = $this->getAuthenticatedUser();
-            if(Comments::addComment($data["post_id"], $user["id"], $data["comment"])){
+            if(Comments::addComment($data["post_id"], $user["uuid"], $data["comment"])){
                 return $this->sendCustomResponse("Comment Added", 200);
             }
             return $this->errorArray();
