@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use App\Traits\AuthTrait;
+use App\Traits\MediaTrait;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -12,7 +13,7 @@ use Tymon\JWTAuth\Facades\JWTAuth;
 
 class AuthController extends Controller
 {
-    use AuthTrait;
+    use AuthTrait, MediaTrait;
     /**
      * Get register user in db with unverified state
      */
@@ -104,7 +105,7 @@ class AuthController extends Controller
         try {
             $data = $request->all();
             $user = $this->getAuthenticatedUser();
-            return $this->sendData(["id" => $user["uuid"]], 200);
+            return $this->sendData(["id" => $user["uuid"], "avatar" => $this->getFullURL($user["avatar"]), "username" => $user["username"] ], 200);
         }catch (\Exception $ex) {
             return $this->errorArray($ex->getMessage());
         }

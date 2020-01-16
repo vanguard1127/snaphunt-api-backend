@@ -31,4 +31,5 @@ $router->group(["prefix" => "api", 'middleware' => 'jwt.auth'], function() use($
     $router->post('/user/updateSettings', ['uses' => 'UserSettingsController@updateSettings']);
     $router->post('/add/clap', ['uses' => 'ClapsController@addClap']);
     $router->post('/add/comment', ['uses' => 'CommentsController@addComment']);
+    $router->get('/comments', ['uses' => 'CommentsController@getComments']);
 });
