@@ -21,7 +21,8 @@ class ChallengeModel extends Model
         "media",
         "status",
         "is_draft",
-        "thumb"
+        "thumb",
+        "original_post"
     ];
 
     public function owner(){
@@ -30,6 +31,10 @@ class ChallengeModel extends Model
 
     public function claps(){
         return $this->hasMany("App\Models\Claps", "post_id", "uuid");
+    }
+
+    public function comments(){
+        return $this->hasMany("App\Models\Comments", "post_id", "uuid");
     }
 
     public static $createChallengeRules = [
@@ -49,7 +54,8 @@ class ChallengeModel extends Model
                 "privacy" => $data["privacy"],
                 "media" => $data["media"],
                 "is_draft" => $data["is_draft"],
-                "thumb" => $data["thumb"]
+                "thumb" => $data["thumb"],
+                "original_post" => $data["uuid"] != "null" ? $data["uuid"] : null
             ]
         );
     }

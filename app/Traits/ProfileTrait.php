@@ -15,7 +15,10 @@ trait ProfileTrait{
                 "desc" => $challenge["description"],
                 "post_type" => $challenge["post_type"],
                 "claps" => $this->getClapCount($challenge->claps),
-                "uuid" => $challenge["uuid"]
+                "comments" => $challenge->comments->count(),
+                "uuid" => $challenge["uuid"],
+                "category" => $challenge["category"],
+                "privacy" => $challenge["privacy"],
             ];
         }
         return $resp;
