@@ -23,6 +23,8 @@ class ChallengeController extends Controller
                     ChallengeModel::createChallenge($data, $user["uuid"]);
                     return $this->sendCustomResponse("Challenge created", 200);
                 }
+            }else{
+                return $this->errorArray($request->file("media")->getErrorMessage());
             }
             return $this->errorArray();
         } catch(ValidationException $ex){
