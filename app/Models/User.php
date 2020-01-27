@@ -68,5 +68,13 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     public function challenges(){
         return $this->hasMany("App\Models\ChallengeModel", "owner_id", "uuid");
     }
+
+    public static function searchUsers($query){
+        $users = static::select("username")->where("username", "ilike", "%$query%")->orWhere("first_name", "like", "%$query%")->orWhere("last_name", "like", "%$query%")->get();
+        if($users->isEmpty()){
+            return [];
+        }
+        return $users;
+    }
     
 }

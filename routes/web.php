@@ -32,4 +32,7 @@ $router->group(["prefix" => "api", 'middleware' => 'jwt.auth'], function() use($
     $router->post('/add/clap', ['uses' => 'ClapsController@addClap']);
     $router->post('/add/comment', ['uses' => 'CommentsController@addComment']);
     $router->get('/comments', ['uses' => 'CommentsController@getComments']);
+    $router->get('/searchUsers', ['uses' => 'DiscoverController@searchUser']);
+    $router->get('/searchResults', ['uses' => 'DiscoverController@searchResults']);
+    $router->get('/flatUserResults', ['uses' => 'DiscoverController@flatUserResults']);
 });
