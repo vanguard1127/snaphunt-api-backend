@@ -14,8 +14,9 @@ class DiscoverController extends Controller
     public function searchUser(Request $request){
         try {
             $data = $request->all();
+            $user = $this->getAuthenticatedUser();
             $this->validateData($data, ["query" => "required"]);
-            $users = User::searchUsers($data["query"]);
+            $users = User::searchUsers($data["query"], $user);
             return $this->sendData($users);
         } catch(ValidationException $ex){
             return $this->validationError($ex);
@@ -27,9 +28,10 @@ class DiscoverController extends Controller
     public function searchResults(Request $request){
         try {
             $data = $request->all();
+            $user = $this->getAuthenticatedUser();
             $this->validateData($data, ["query" => "required"]);
             $resp = [ [ "data" => [], "title" => "USERS" ], ["data" => [], "title" => "CHALLENGES" ] ];
-            $resp[0]["data"] = $this->prepareSearchUsers($data["query"]);
+            $resp[0]["data"] = $this->prepareSearchUsers($data["query"], $user);
             $resp[1]["data"] = $this->prepareSearchCallenges($data["query"]);
             return $this->sendData($resp);
         } catch(ValidationException $ex){
@@ -42,9 +44,10 @@ class DiscoverController extends Controller
     public function flatUserResults(Request $request){
         try {
             $data = $request->all();
+            $user = $this->getAuthenticatedUser();
             $this->validateData($data, ["query" => "required"]);
             $offset = isset($data["offset"]) ? $data["offset"] : 0;
-            $resp = $this->prepareFlatUserResult($data["query"], $offset);
+            $resp = $this->prepareFlatUserResult($data["query"], $user, $offset);
             return $this->sendData($resp);
         } catch(ValidationException $ex){
             return $this->validationError($ex);

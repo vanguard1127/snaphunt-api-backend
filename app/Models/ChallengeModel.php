@@ -60,4 +60,8 @@ class ChallengeModel extends Model
             ]
         );
     }
+
+    public static function totalChallenges($uuid){
+        return static::where("owner_id", $uuid)->get()->count();
+    }
 }

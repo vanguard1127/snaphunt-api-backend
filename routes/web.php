@@ -35,4 +35,5 @@ $router->group(["prefix" => "api", 'middleware' => 'jwt.auth'], function() use($
     $router->get('/searchUsers', ['uses' => 'DiscoverController@searchUser']);
     $router->get('/searchResults', ['uses' => 'DiscoverController@searchResults']);
     $router->get('/flatUserResults', ['uses' => 'DiscoverController@flatUserResults']);
+    $router->get('/follow', ['uses' => 'FriendController@makeFriends']);
 });

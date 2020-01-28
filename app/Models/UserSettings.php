@@ -19,4 +19,11 @@ class UserSettings extends Model
     public static function updateRow($userId, $data){
         return static::where("user_id", $userId)->update($data);
     }
+
+    public static function isPrivate($uuid){
+        if($setting = static::where("user_id", $uuid)->first()){
+            return $setting["private_account"];
+        }
+        return false;
+    }
 }
