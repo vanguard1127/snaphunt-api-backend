@@ -2,15 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Friend;
 use App\Models\User;
-use App\Traits\MediaTrait;
-use App\Traits\ProfileTrait;
+use App\Traits\CommonTrait;
 use Illuminate\Http\Request;
 
 class ProfileController extends Controller
-{
-    use ProfileTrait, MediaTrait;
-    
+{    
     public function getProfile(Request $request){
         try {
             $data = $request->all();
@@ -26,7 +24,10 @@ class ProfileController extends Controller
                     "username" => $user["username"],
                     "full_name" => $user['first_name']." ".$user["last_name"],
                     "challenges_count" => $user->challenges->count(),
-                    "challenges" => $this->myChallenges($user->challenges)
+                    "followers_count" => Friend::totalFollowers($user["uuid"]),
+                    "followings_count" => Friend::totalFollowings($user["uuid"]),
+                    "points" => $user["points"],
+                    "challenges" => $this->prepareChallenges($user->challenges)
                 ];
                 return $this->sendData($response);
             }

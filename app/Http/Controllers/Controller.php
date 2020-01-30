@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Traits\CommonTrait;
 use App\Traits\HttpTrait;
+use App\Traits\MediaTrait;
 use Exception;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
@@ -11,7 +13,7 @@ use Tymon\JWTAuth\Facades\JWTAuth;
 
 class Controller extends BaseController
 {
-    use HttpTrait;
+    use HttpTrait, MediaTrait, CommonTrait;
     
     public static function sendCustomResponse($message = '', $status = 400)
     {

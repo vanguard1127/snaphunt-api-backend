@@ -3,14 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\Comments;
-use App\Traits\MediaTrait;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class CommentsController extends Controller
 {
-    use MediaTrait;
-
     public function addComment(Request $request){
         try {
             $data = $request->all();

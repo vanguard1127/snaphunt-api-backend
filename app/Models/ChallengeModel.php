@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use App\Traits\MediaTrait;
 use App\Traits\UsesUuid;
 use Illuminate\Database\Eloquent\Model;
 use Intervention\Image\Facades\Image;

@@ -28,4 +28,9 @@ class Friend extends Model
     public static function totalFollowers($uuid){
         return static::where("following_id", $uuid)->where("status","active")->get()->count();
     }
+
+    public static function totalFollowings($uuid){
+        return static::where("follower_id", $uuid)->where("status","active")->get()->count();
+    }
+
 }

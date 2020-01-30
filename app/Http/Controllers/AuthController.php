@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use App\Traits\AuthTrait;
-use App\Traits\MediaTrait;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -13,7 +12,7 @@ use Tymon\JWTAuth\Facades\JWTAuth;
 
 class AuthController extends Controller
 {
-    use AuthTrait, MediaTrait;
+    use AuthTrait;
     /**
      * Get register user in db with unverified state
      */

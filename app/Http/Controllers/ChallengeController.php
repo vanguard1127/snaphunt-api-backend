@@ -4,12 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\ChallengeModel;
 use App\Traits\ChallengeTrait;
-use App\Traits\MediaTrait;
 use Illuminate\Http\Request;
 
 class ChallengeController extends Controller
 {
-    use ChallengeTrait, MediaTrait;
+    use ChallengeTrait;
 
     public function saveChallenge(Request $request){
         try {

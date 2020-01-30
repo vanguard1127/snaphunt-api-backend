@@ -4,12 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use App\Traits\DiscoverTrait;
-use App\Traits\MediaTrait;
 use Illuminate\Http\Request;
 
 class DiscoverController extends Controller
 {
-    use MediaTrait, DiscoverTrait;
+    use  DiscoverTrait;
 
     public function searchUser(Request $request){
         try {

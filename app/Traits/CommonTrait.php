@@ -1,9 +1,9 @@
 <?php
 namespace App\Traits;
 
-trait ProfileTrait{
+trait CommonTrait{
 
-    public function myChallenges($challenges){
+    public function prepareChallenges($challenges){
         $resp = [];
         foreach($challenges as $challenge){
             $owner = $challenge->owner;
