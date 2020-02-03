@@ -25,7 +25,9 @@ $app = new Laravel\Lumen\Application(
 
 \Doctrine\DBAL\Types\Type::addType('uuid', 'Ramsey\Uuid\Doctrine\UuidType');
 
-$app->withFacades();
+$app->withFacades(true, [
+    'Illuminate\Support\Facades\Notification' => 'Notification',
+]);
 $app->withEloquent();
 
 $app->configure("jwt");
@@ -92,6 +94,10 @@ $app->register(Flipbox\LumenGenerator\LumenGeneratorServiceProvider::class);
 $app->register(Barryvdh\Cors\ServiceProvider::class);
 $app->register(\Illuminate\Mail\MailServiceProvider::class);
 $app->register(Intervention\Image\ImageServiceProvider::class);
+$app->register(\Illuminate\Notifications\NotificationServiceProvider::class);
+
+
+$app->alias('mailer',\Illuminate\Contracts\Mail\Mailer::class);
 
 /*
 |--------------------------------------------------------------------------

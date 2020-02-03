@@ -27,7 +27,8 @@ class ProfileController extends Controller
                     "followers_count" => Friend::totalFollowers($user["uuid"]),
                     "followings_count" => Friend::totalFollowings($user["uuid"]),
                     "points" => $user["points"],
-                    "challenges" => $this->prepareChallenges($user->challenges)
+                    "challenges" => $this->prepareChallenges($user->challenges),
+                    "unread_notifications" => $this->notifications($user)
                 ];
                 return $this->sendData($response);
             }

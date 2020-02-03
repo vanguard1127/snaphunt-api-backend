@@ -26,8 +26,19 @@ trait DiscoverTrait{
         return $resp;
     }
 
-    public function prepareSearchCallenges($query){
-        return [];
+    public function prepareSearchCallenges($query, $myUser){
+
+        $friendIds = Friend::followingIds($myUser["uuid"]);
+        $challenges = ChallengeModel::where("description", "ilike", "%$query%")->orWhereHas("owner", function($sql) use($myUser, $query){
+            $sql->where("username", "ilike", "%$query%")->where("uuid", "!=", $myUser["uuid"]);
+        })->where(function($sql){
+            $sql->where("privacy", "public");
+        })->orWhere(function($sql) use($friendIds){
+            $sql->where("privacy", "friends")->whereIn("owner_id", $friendIds);
+        })
+        ->orderBy("created_at", "DESC")->get();
+
+        return $this->prepareChallenges($challenges);
     }
 
     public function prepareFlatUserResult($query, $myUser, $offset = 0, $limit = 15){

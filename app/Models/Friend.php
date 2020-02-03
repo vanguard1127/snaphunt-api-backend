@@ -13,6 +13,14 @@ class Friend extends Model
 
     protected $fillable = [ "following_id", "follower_id", "status" ];
 
+    public function follower(){
+        return $this->hasOne("App\Models\User", "uuid", "follower_id");
+    }
+
+    public function following(){
+        return $this->hasOne("App\Models\User", "uuid", "following_id");
+    }
+
     public static function makeFriends($followingId, $followerId, $status = "pending"){
         return static::create([ "following_id" => $followingId, "follower_id" => $followerId, "status" => $status ]);
     }
@@ -33,4 +41,7 @@ class Friend extends Model
         return static::where("follower_id", $uuid)->where("status","active")->get()->count();
     }
 
+    public static function followingIds($uuid){
+        return static::where("follower_id", $uuid)->where("status","active")->pluck("following_id");
+    }
 }
