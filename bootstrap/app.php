@@ -34,6 +34,7 @@ $app->configure("jwt");
 $app->configure("mail");
 $app->configure("auth");
 $app->configure('cors');
+$app->configure('general');
 
 /*
 |--------------------------------------------------------------------------

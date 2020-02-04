@@ -74,6 +74,25 @@ trait DiscoverTrait{
         }
         return $resp;
     }
+
+    public function prepareDiscoverData($offset, $limit, $categoryOffset = 3){
+        $resp = [];
+        $categories = config("general.categories");
+        if($categoryOffset == 3){
+            $mostPopular = ChallengeModel::withCount("claps")->orderBy("claps_count", "desc")->offset($offset)->limit($limit)->get();
+            $catOne = ChallengeModel::where("category", 3)->withCount("claps")->orderBy("claps_count", "desc")->offset($offset)->limit($limit)->get();
+            $catTwo = ChallengeModel::where("category", 4)->withCount("claps")->orderBy("claps_count", "desc")->offset($offset)->limit($limit)->get();
+            $resp[] = ["title" => "Most Popular", "data" => $this->prepareChallenges($mostPopular) ];
+            $resp[] = ["title" => $categories[3], "data" =>  $this->prepareChallenges($catOne)];
+            $resp[] = ["title" => $categories[4], "data" => $this->prepareChallenges($catTwo) ];
+        }else{
+            for($i=$categoryOffset; $i<=$categoryOffset + 2; $i++){
+                $cat = ChallengeModel::where("category", $categoryOffset)->withCount("claps")->orderBy("claps_count", "desc")->offset($offset)->limit($limit)->get();
+                $resp[] = ["title" => $categories[$categoryOffset], "data" => $this->prepareChallenges($cat) ];
+            }
+        }
+        return $resp;
+    }
 }
 
 ?>

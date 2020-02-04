@@ -54,4 +54,19 @@ class DiscoverController extends Controller
             return $this->errorArray($ex->getMessage());
         }
     }
+
+    public function discoverData(Request $request){
+        try {
+            $data = $request->all();
+            // $user = $this->getAuthenticatedUser();
+            $offset = isset($data["offset"]) ? $data["offset"] : 0;
+            $limit = isset($data["limit"]) ? $data["limit"] : 3;
+            $resp = $this->prepareDiscoverData($offset, $limit);
+            return $this->sendData($resp);
+        } catch(ValidationException $ex){
+            return $this->validationError($ex);
+        }catch (\Exception $ex) {
+            return $this->errorArray($ex->getMessage());
+        }
+    }
 }
