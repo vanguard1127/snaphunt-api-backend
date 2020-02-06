@@ -66,7 +66,22 @@ class DiscoverController extends Controller
         } catch(ValidationException $ex){
             return $this->validationError($ex);
         }catch (\Exception $ex) {
-            return $this->errorArray($ex->getMessage());
+            return $this->errorArray($ex->getMessage(). $ex->getLine(). $ex->getFile());
+        }
+    }
+
+    public function categoryData(Request $request){
+        try {
+            $data = $request->all();
+            $this->validateData($data, ["category_id" => "required"]);
+            $offset = isset($data["offset"]) ? $data["offset"] : 0;
+            $limit = isset($data["limit"]) ? $data["limit"] : 3;
+            $resp = $this->prepareCategoryData($data["category_id"],$offset, $limit);
+            return $this->sendData($resp);
+        } catch(ValidationException $ex){
+            return $this->validationError($ex);
+        }catch (\Exception $ex) {
+            return $this->errorArray($ex->getMessage(). $ex->getLine(). $ex->getFile());
         }
     }
 }

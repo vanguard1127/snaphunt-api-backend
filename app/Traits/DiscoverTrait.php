@@ -75,24 +75,43 @@ trait DiscoverTrait{
         return $resp;
     }
 
-    public function prepareDiscoverData($offset, $limit, $categoryOffset = 3){
+    public function prepareDiscoverData($offset, $limit, $categoryOffset = 0){
         $resp = [];
         $categories = config("general.categories");
-        if($categoryOffset == 3){
-            $mostPopular = ChallengeModel::withCount("claps")->orderBy("claps_count", "desc")->offset($offset)->limit($limit)->get();
-            $catOne = ChallengeModel::where("category", 3)->withCount("claps")->orderBy("claps_count", "desc")->offset($offset)->limit($limit)->get();
-            $catTwo = ChallengeModel::where("category", 4)->withCount("claps")->orderBy("claps_count", "desc")->offset($offset)->limit($limit)->get();
-            $resp[] = ["title" => "Most Popular", "data" => $this->prepareChallenges($mostPopular) ];
-            $resp[] = ["title" => $categories[3], "data" =>  $this->prepareChallenges($catOne)];
-            $resp[] = ["title" => $categories[4], "data" => $this->prepareChallenges($catTwo) ];
-        }else{
-            for($i=$categoryOffset; $i<=$categoryOffset + 2; $i++){
-                $cat = ChallengeModel::where("category", $categoryOffset)->withCount("claps")->orderBy("claps_count", "desc")->offset($offset)->limit($limit)->get();
-                $resp[] = ["title" => $categories[$categoryOffset], "data" => $this->prepareChallenges($cat) ];
+        // if($offset <= 5){
+        //     $mostPopular = ChallengeModel::withCount("claps")->orderBy("claps_count", "desc")->offset($categoryOffset)->limit($limit)->get();
+        //     $catOne = ChallengeModel::where("category", 3)->withCount("claps")->orderBy("claps_count", "desc")->offset($categoryOffset)->limit($limit)->get();
+        //     $catTwo = ChallengeModel::where("category", 4)->withCount("claps")->orderBy("claps_count", "desc")->offset($categoryOffset)->limit($limit)->get();
+        //     $catThree = ChallengeModel::where("category", 5)->withCount("claps")->orderBy("claps_count", "desc")->offset($categoryOffset)->limit($limit)->get();
+        //     $resp[] = ["title" => "Most Popular", "data" => $this->prepareChallenges($mostPopular) ];
+        //     $resp[] = ["title" => $categories[3], "data" =>  $this->prepareChallenges($catOne)];
+        //     $resp[] = ["title" => $categories[4], "data" => $this->prepareChallenges($catTwo) ];
+        //     $resp[] = ["title" => $categories[5], "data" => $this->prepareChallenges($catThree) ];
+        // }else{
+            for($i=$offset; $i <$offset + 4; $i++){
+                if(isset($categories[$i+1])){
+                    if($i == 0){
+                        $cat = ChallengeModel::withCount("claps")->orderBy("claps_count", "desc")->offset($categoryOffset)->limit($limit)->get();
+                    }else{
+                        $cat = ChallengeModel::where("category", $i+1)->withCount("claps")->orderBy("claps_count", "desc")->offset($categoryOffset)->limit($limit)->get();
+                    }
+                    $resp[] = ["title" => $categories[$i+1], "data" => $this->prepareChallenges($cat), "category" => $i+1 ];
+                }
             }
+       // }
+        return $resp;
+    }
+
+    public function prepareCategoryData($categoryId, $offset, $limit){
+        $resp = [];
+        $categories = config("general.categories");
+        if(isset($categories[$categoryId])){
+            $cat = ChallengeModel::where("category", $categoryId)->withCount("claps")->orderBy("claps_count", "desc")->offset($offset)->limit($limit)->get();
+            $resp = $this->prepareChallenges($cat);
         }
         return $resp;
     }
+
 }
 
 ?>

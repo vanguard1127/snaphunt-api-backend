@@ -1,8 +1,8 @@
 <?php 
     return [
         "categories" => [
-            // 1 => "Most popular",
-            // 2 => "Top Savage",
+            1 => "Most popular",
+            2 => "Top Savage",
             3 => "Pay it Forward",
             4 => "Travel",
             5 => "Fails",
