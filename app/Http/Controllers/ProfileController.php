@@ -22,6 +22,7 @@ class ProfileController extends Controller
                 $response = [
                     "uuid" => $user['uuid'],
                     "username" => $user["username"],
+                    "avatar" =>  $this->getFullURL($user["avatar"]),
                     "full_name" => $user['first_name']." ".$user["last_name"],
                     "challenges_count" => $user->challenges->count(),
                     "followers_count" => Friend::totalFollowers($user["uuid"]),
