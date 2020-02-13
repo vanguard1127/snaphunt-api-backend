@@ -22,7 +22,8 @@ class ChallengeModel extends Model
         "status",
         "is_draft",
         "thumb",
-        "original_post"
+        "original_post",
+        "type"
     ];
 
     public function owner(){
@@ -50,11 +51,12 @@ class ChallengeModel extends Model
                 "post_type" => $data["post_type"],
                 "owner_id" => $userId,
                 "description" => ($data["description"] != "" ? $data["description"] : null),
-                "category" => $data["category"],
+                "category" => $data["category"] != "null" ? $data["category"] : null,
                 "privacy" => $data["privacy"],
                 "media" => $data["media"],
                 "is_draft" => $data["is_draft"],
                 "thumb" => $data["thumb"],
+                "type" => isset($data["type"]) ? $data["type"] : "user",
                 "original_post" => $data["uuid"] != "null" ? $data["uuid"] : null
             ]
         );
