@@ -10,7 +10,6 @@ trait ChallengeTrait{
     public function uploadToS3($media, $type){
         try{
             // save media to local disk first
-
             $mediaName = time().'_' . $media->getClientOriginalName();
             $thumbName = time().'_thumb_' . $media->getClientOriginalName();
             if($type == "video"){

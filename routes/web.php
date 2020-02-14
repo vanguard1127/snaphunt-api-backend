@@ -41,4 +41,5 @@ $router->group(["prefix" => "api", 'middleware' => 'jwt.auth'], function() use($
     $router->post('/cancelRequest', ['uses' => 'FriendController@cancelRequest']);
     $router->get('/discoverData', ['uses' => 'DiscoverController@discoverData']);
     $router->get('/categoryData', ['uses' => 'DiscoverController@categoryData']);
+    $router->get('/season1Data', ['uses' => 'Season1Controller@season1Data']);
 });
