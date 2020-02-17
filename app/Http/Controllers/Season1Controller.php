@@ -19,7 +19,9 @@ class Season1Controller extends Controller
                 $resp[] = [
                     "uuid" => $ch["uuid"],
                     "media" => $this->getFullURL($ch["media"]),
-                    "desc" => $ch["description"]
+                    "desc" => $ch["description"],
+                    "category" => $ch["category"],
+                    "privacy" => $ch["privacy"]
                 ];
             }
             return $this->sendData($resp);
