@@ -42,4 +42,5 @@ $router->group(["prefix" => "api", 'middleware' => 'jwt.auth'], function() use($
     $router->get('/discoverData', ['uses' => 'DiscoverController@discoverData']);
     $router->get('/categoryData', ['uses' => 'DiscoverController@categoryData']);
     $router->get('/season1Data', ['uses' => 'Season1Controller@season1Data']);
+    $router->get('/savedChallenges', ['uses' => 'ChallengeController@getSavedChallenges']);
 });
