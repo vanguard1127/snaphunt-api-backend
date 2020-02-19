@@ -19,6 +19,7 @@ trait CommonTrait{
                 "uuid" => $challenge["uuid"],
                 "category" => $challenge["category"],
                 "privacy" => $challenge["privacy"],
+                "is_snapoff" => $challenge["original_post"] ? true : false
             ];
         }
         return $resp;

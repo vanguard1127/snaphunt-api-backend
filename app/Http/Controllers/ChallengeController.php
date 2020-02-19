@@ -6,6 +6,7 @@ use App\Models\ChallengeModel;
 use App\Traits\ChallengeTrait;
 use App\Traits\CommonTrait;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class ChallengeController extends Controller
 {
@@ -16,15 +17,28 @@ class ChallengeController extends Controller
             $data = $request->all();
             $user = $this->getAuthenticatedUser();
             $this->validateData($data, ChallengeModel::$createChallengeRules);
-            if($request->file("media")->isValid()){
-                if($mediaNames = $this->uploadToS3($data["media"], $data["post_type"])){
-                    $data["media"] = $mediaNames["media_name"];
-                    $data["thumb"] = $mediaNames["thumb_name"];
-                    ChallengeModel::createChallenge($data, $user["uuid"]);
+            
+            if($data["already_saved"] == "true"){
+                $update = ChallengeModel::where("uuid", $data["uuid"])->update([
+                    "description" => $data["description"],
+                    "category" => is_string($data["category"]) ? null : $data["category"],
+                    "privacy" => $data["privacy"],
+                    "is_draft" => false
+                ]);
+                if($update){
                     return $this->sendCustomResponse("Challenge created", 200);
                 }
             }else{
-                return $this->errorArray($request->file("media")->getErrorMessage());
+                if($request->file("media")->isValid()){
+                    if($mediaNames = $this->uploadToS3($data["media"], $data["post_type"])){
+                        $data["media"] = $mediaNames["media_name"];
+                        $data["thumb"] = $mediaNames["thumb_name"];
+                        ChallengeModel::createChallenge($data, $user["uuid"]);
+                        return $this->sendCustomResponse("Challenge created", 200);
+                    }
+                }else{
+                    return $this->errorArray($request->file("media")->getErrorMessage());
+                }
             }
             return $this->errorArray();
         } catch(ValidationException $ex){
@@ -44,6 +58,24 @@ class ChallengeController extends Controller
             $challneges = ChallengeModel::where("owner_id", $user["uuid"])->where("is_draft", true)->limit($limit)->offset($offset)->get();
             $savedChallenges = $this->prepareChallenges($challneges);
             return $this->sendData($savedChallenges);
+        } catch(ValidationException $ex){
+            return $this->validationError($ex);
+        }catch (\Exception $ex) {
+            return $this->errorArray($ex->getMessage().$ex->getLine().$ex->getFile());
+        }
+    }
+
+    public function deleteDraft(Request $request){
+        try {
+            $data = $request->all();
+            $this->validateData($data, ["uuid" => "required"]);
+            $user = $this->getAuthenticatedUser();
+            if($challenge = ChallengeModel::where("uuid", $data["uuid"])->where("is_draft", true)->where("owner_id", $user["uuid"])->first()){
+                Storage::disk('s3')->delete([$challenge["media"], $challenge["thumb"]]);
+                $challenge->delete();
+                return $this->sendCustomResponse("Draft deleted", 200);
+            }
+            return $this->sendCustomResponse("You are not authorised to do this.");
         } catch(ValidationException $ex){
             return $this->validationError($ex);
         }catch (\Exception $ex) {
