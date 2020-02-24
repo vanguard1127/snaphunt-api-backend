@@ -6,23 +6,24 @@ use FFMpeg\Coordinate\Dimension;
 use FFMpeg\Coordinate\TimeCode;
 use FFMpeg\FFMpeg;
 use FFMpeg\Format\Video\X264;
+use FFMpeg\Media\Video;
 use Illuminate\Support\Facades\Storage;
 use Intervention\Image\Facades\Image;
 
 trait MediaTrait{
 
-    public function generateImageThumbnail($image){
+    public function generateImageThumbnail($image, $thumbWidth, $thumbHeight){
         return Image::make($image)
-        ->resize(null, 200, function ($constraint) {
+        ->resize($thumbWidth, $thumbHeight, function ($constraint) {
             $constraint->aspectRatio();
-        })->encode('jpg',100);
+        })->encode('jpg',70);
     }
 
-    public function generateGif($video){
+    public function generateGif($video, $thumbWidth, $thumbHeight){
         $gifName = time().".gif";
         $ffmpeg = FFMpeg::create();
         $video = $ffmpeg->open(storage_path()."/app/uploads/".$video);
-        $video->gif(TimeCode::fromSeconds(2), new Dimension(200, 200), 3)->save(storage_path("app/uploads/gifs/").$gifName);
+        $video->gif(TimeCode::fromSeconds(2), new Dimension($thumbWidth, $thumbHeight), 3)->save(storage_path("app/uploads/gifs/").$gifName);
         return $gifName;
     }
 
@@ -34,7 +35,7 @@ trait MediaTrait{
         ->filters()
         ->resize(new Dimension(540, 960))
         ->synchronize();
-        $video->save(new X264('libmp3lame','libx264'), storage_path("app/uploads/compressedData/").$videoName);
+        $video->save(new X264('aac', 'libx264'), storage_path("app/uploads/compressedData/").$videoName);
         return $videoName;
     }
 

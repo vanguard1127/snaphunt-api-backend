@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Storage;
 
 trait ChallengeTrait{
 
-    public function uploadToS3($media, $type){
+    public function uploadToS3($media, $type, $thumbWidth = 200, $thumbHeight = 200 ){
         try{
             // save media to local disk first
             $mediaName = time().'_' . $media->getClientOriginalName();
@@ -16,7 +16,7 @@ trait ChallengeTrait{
                 Storage::disk('local')->put("uploads/".$mediaName, file_get_contents($media), "public");
                 // compress media
                 $this->compressVideo($mediaName);
-                $thumbName = $this->generateGif($mediaName);
+                $thumbName = $this->generateGif($mediaName, $thumbWidth, $thumbHeight);
                 Storage::disk('s3')->put($thumbName, file_get_contents(storage_path("app/uploads/gifs/").$thumbName) , "public");
                 Storage::disk('s3')->put($mediaName, file_get_contents(storage_path("app/uploads/compressedData/").$mediaName) , "public");
                 // delete both mp4 file and gif
@@ -24,7 +24,7 @@ trait ChallengeTrait{
                 unlink(storage_path('app/uploads/compressedData/'.$mediaName));
                 unlink(storage_path('app/uploads/gifs/'.$thumbName));
             }else{
-                $thumb = $this->generateImageThumbnail($media);
+                $thumb = $this->generateImageThumbnail($media, $thumbWidth, $thumbHeight);
                 $originalImage = $this->compressImage($media);
                 Storage::disk('s3')->put($thumbName, $thumb, "public");
                 Storage::disk('s3')->put($mediaName, $originalImage, "public");

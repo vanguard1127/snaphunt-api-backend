@@ -44,4 +44,5 @@ $router->group(["prefix" => "api", 'middleware' => 'jwt.auth'], function() use($
     $router->get('/season1Data', ['uses' => 'Season1Controller@season1Data']);
     $router->get('/savedChallenges', ['uses' => 'ChallengeController@getSavedChallenges']);
     $router->post('/deleteDraft', ['uses' => 'ChallengeController@deleteDraft']);
+    $router->post('/uploadS3', ['uses' => 'ChallengeController@uploadS3Api']);
 });

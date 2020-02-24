@@ -17,7 +17,6 @@ class ChallengeController extends Controller
             $data = $request->all();
             $user = $this->getAuthenticatedUser();
             $this->validateData($data, ChallengeModel::$createChallengeRules);
-            
             if($data["already_saved"] == "true"){
                 $update = ChallengeModel::where("uuid", $data["uuid"])->update([
                     "description" => $data["description"],
@@ -74,6 +73,25 @@ class ChallengeController extends Controller
                 Storage::disk('s3')->delete([$challenge["media"], $challenge["thumb"]]);
                 $challenge->delete();
                 return $this->sendCustomResponse("Draft deleted", 200);
+            }
+            return $this->sendCustomResponse("You are not authorised to do this.");
+        } catch(ValidationException $ex){
+            return $this->validationError($ex);
+        }catch (\Exception $ex) {
+            return $this->errorArray($ex->getMessage().$ex->getLine().$ex->getFile());
+        }
+    }
+
+    public function uploadS3Api(Request $request){
+        try {
+            $data = $request->all();
+            $this->validateData($data, ["media" => "required", "post_type" => "required" ]);
+            $resp = [];
+            // $user = $this->getAuthenticatedUser();
+            if($mediaNames = $this->uploadToS3($data["media"], $data["post_type"], $data["width"], $data["height"])){
+                $resp["media"] = $mediaNames["media_name"];
+                $resp["thumb"] = $mediaNames["thumb_name"];
+                return $this->sendData($resp);
             }
             return $this->sendCustomResponse("You are not authorised to do this.");
         } catch(ValidationException $ex){
