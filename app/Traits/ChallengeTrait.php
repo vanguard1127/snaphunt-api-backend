@@ -14,17 +14,21 @@ trait ChallengeTrait{
             $thumbName = time().'_thumb_' . $media->getClientOriginalName();
             if($type == "video"){
                 Storage::disk('local')->put("uploads/".$mediaName, file_get_contents($media), "public");
+                // compress media
+                $this->compressVideo($mediaName);
                 $thumbName = $this->generateGif($mediaName);
                 Storage::disk('s3')->put($thumbName, file_get_contents(storage_path("app/uploads/gifs/").$thumbName) , "public");
+                Storage::disk('s3')->put($mediaName, file_get_contents(storage_path("app/uploads/compressedData/").$mediaName) , "public");
                 // delete both mp4 file and gif
                 unlink(storage_path('app/uploads/'.$mediaName));
+                unlink(storage_path('app/uploads/compressedData/'.$mediaName));
                 unlink(storage_path('app/uploads/gifs/'.$thumbName));
             }else{
                 $thumb = $this->generateImageThumbnail($media);
+                $originalImage = $this->compressImage($media);
                 Storage::disk('s3')->put($thumbName, $thumb, "public");
+                Storage::disk('s3')->put($mediaName, $originalImage, "public");
             }
-            // upload data now
-            Storage::disk('s3')->put($mediaName, file_get_contents($media), "public");
             return [ "media_name" => $mediaName, "thumb_name" => $thumbName ];
         }catch(\Exception $ex){
             Log::info($ex);
