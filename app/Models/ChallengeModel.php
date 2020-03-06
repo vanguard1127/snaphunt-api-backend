@@ -23,7 +23,8 @@ class ChallengeModel extends Model
         "is_draft",
         "thumb",
         "original_post",
-        "type"
+        "type",
+        "title"
     ];
 
     public function owner(){
@@ -49,7 +50,7 @@ class ChallengeModel extends Model
         return static::create(
             [
                 "post_type" => $data["post_type"],
-                "owner_id" => $userId,
+                "owner_id" => isset($data["owner_id"]) ? $data["owner_id"] : $userId,
                 "description" => ($data["description"] != "" ? $data["description"] : null),
                 "category" => $data["category"] != "null" ? $data["category"] : null,
                 "privacy" => $data["privacy"],
@@ -57,6 +58,7 @@ class ChallengeModel extends Model
                 "is_draft" => $data["is_draft"],
                 "thumb" => $data["thumb"],
                 "type" => isset($data["type"]) ? $data["type"] : "user",
+                "title" => isset($data["title"]) ? $data["title"] : null,
                 "original_post" => $data["uuid"] != "null" ? $data["uuid"] : null
             ]
         );

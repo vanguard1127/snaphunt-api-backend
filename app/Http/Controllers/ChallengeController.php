@@ -17,7 +17,7 @@ class ChallengeController extends Controller
             $data = $request->all();
             $user = $this->getAuthenticatedUser();
             $this->validateData($data, ChallengeModel::$createChallengeRules);
-            if($data["already_saved"] == "true"){
+            if(isset($data["already_saved"]) && $data["already_saved"] == "true"){
                 $update = ChallengeModel::where("uuid", $data["uuid"])->update([
                     "description" => $data["description"],
                     "category" => is_string($data["category"]) ? null : $data["category"],
