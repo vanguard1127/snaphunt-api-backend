@@ -46,4 +46,5 @@ $router->group(["prefix" => "api", 'middleware' => 'jwt.auth'], function() use($
     $router->post('/deleteDraft', ['uses' => 'ChallengeController@deleteDraft']);
     $router->post('/uploadS3', ['uses' => 'ChallengeController@uploadS3Api']);
     $router->get('/sponsor/challenge', ['uses' => 'SponsorController@getSponsorChallenge']);
+    $router->get('/sponsor/challenge/posts', ['uses' => 'SponsorController@getSponsorChallengePosts']);
 });

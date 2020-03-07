@@ -16,6 +16,10 @@ class ChallengeController extends Controller
         try {
             $data = $request->all();
             $user = $this->getAuthenticatedUser();
+
+            $width = isset($data["width"]) ? $data["width"] : 200;
+            $height = isset($data["height"]) ? $data["height"] : 200;
+
             $this->validateData($data, ChallengeModel::$createChallengeRules);
             if(isset($data["already_saved"]) && $data["already_saved"] == "true"){
                 $update = ChallengeModel::where("uuid", $data["uuid"])->update([
@@ -29,7 +33,7 @@ class ChallengeController extends Controller
                 }
             }else{
                 if($request->file("media")->isValid()){
-                    if($mediaNames = $this->uploadToS3($data["media"], $data["post_type"])){
+                    if($mediaNames = $this->uploadToS3($data["media"], $data["post_type"], $width, $height)){
                         $data["media"] = $mediaNames["media_name"];
                         $data["thumb"] = $mediaNames["thumb_name"];
                         ChallengeModel::createChallenge($data, $user["uuid"]);

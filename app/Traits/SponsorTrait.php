@@ -23,7 +23,7 @@ trait SponsorTrait{
                 // "claps" => $this->getClapCount($challenge->claps),
                 // "comments" => $challenge->comments->count(),
                 "uuid" => $challenge["uuid"],
-                // "category" => $challenge["category"],
+                "category" => $challenge["category"],
                 // "privacy" => $challenge["privacy"],
                 // "is_snapoff" => $challenge["original_post"] !=null ? true : false
             ];
@@ -41,7 +41,7 @@ trait SponsorTrait{
 
     public function lastThreeSnapOff($chId){
         $resp = [];
-        $totalSnapoffs = DB::statement("SELECT COUNT(*) as count from challenges where original_post = '$chId'")["count"];
+        $totalSnapoffs = ChallengeModel::selectRaw("COUNT(*) AS count")->where("original_post", $chId)->first();
         // last three
         $lastThreeUsers = ChallengeModel::where("original_post", $chId)->with("owner")->orderBy("created_at", "desc")->limit(3)->get();
         foreach($lastThreeUsers as $user){
@@ -49,7 +49,29 @@ trait SponsorTrait{
                 "avatar" => $this->getFullURL($user["owner"]["avatar"])
             ];
         }
-        return ["users" => $resp, "total" => $totalSnapoffs];
+        return ["users" => $resp, "total" => $totalSnapoffs["count"]];
+    }
+
+    public function prepareSponsorChallengePosts($data){
+        $resp = [];
+        foreach($data as $challenge){
+            $resp[] = [
+                "avatar" => $this->getFullURL($challenge["owner"]["avatar"]),
+                // "claps" => $challenge["claps_count"],
+                "media" => $this->getFullURL($challenge["media"]),
+                "thumb" => $this->getFullURL($challenge["thumb"]),
+                "owner_name" => $challenge["owner"]["first_name"]. " ". $challenge["owner"]["last_name"],
+                "desc" => $challenge["description"],
+                "post_type" => $challenge["post_type"],
+                "claps" => $this->getClapCount($challenge->claps),
+                "comments" => $challenge->comments->count(),
+                "uuid" => $challenge["uuid"],
+                "category" => $challenge["category"],
+                "privacy" => $challenge["privacy"],
+                "is_snapoff" => $challenge["original_post"] !=null ? true : false
+            ];
+        }
+        return $resp;
     }
 
 }
