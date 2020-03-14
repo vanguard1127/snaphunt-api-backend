@@ -79,4 +79,31 @@ class FriendController extends Controller
             return $this->errorArray($ex->getMessage());
         }
     }
+
+    public function getFreinds(Request $request){
+        try {
+            $data = $request->all();
+            $limit = isset($data["limit"]) ? $data["limit"] : 10;
+            $offset = isset($data["offset"]) ? $data["offset"] : 0;
+            $resp = [];
+            $user = $this->getAuthenticatedUser();
+            $friends = Friend::myFriends($user["uuid"], $limit, $offset);
+            foreach($friends as $friend){
+                $friendId = $friend["follower_id"] == $user["uuid"] ? $friend["following_id"] : $friend["follower_id"];
+                $friendObj = User::where("uuid", $friendId)->first();
+                $resp[$friendId] = [
+                    "uuid" => $friendId,
+                    "username" => $friendObj["username"],
+                    "avatar" => $this->getFullURL($friendObj["avatar"]),
+                    "first_name" => $friendObj["first_name"],
+                    "last_name" => $friendObj["last_name"]
+                ];
+            }
+            return $this->sendData(array_values($resp));
+        } catch(ValidationException $ex){
+            return $this->validationError($ex);
+        }catch (\Exception $ex) {
+            return $this->errorArray($ex->getMessage());
+        }
+    }
 }
