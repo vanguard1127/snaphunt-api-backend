@@ -1,0 +1,84 @@
+<?php
+
+namespace App\Helpers;
+
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
+
+class ChallengeHelper
+{
+    public static function uploadToS3($media, $type, $thumbWidth = 200, $thumbHeight = 200 ){
+        try{
+            // save media to local disk first
+            $mediaName = time().'_' . $media->getClientOriginalName();
+            $thumbName = time().'_thumb_' . $media->getClientOriginalName();
+            if($type == "video"){
+                Storage::disk('local')->put("uploads/".$mediaName, file_get_contents($media), "public");
+                // compress media
+                MediaHelper::compressVideo($mediaName);
+                $thumbName = MediaHelper::generateGif($mediaName, $thumbWidth, $thumbHeight);
+                Storage::disk('s3')->put($thumbName, file_get_contents(storage_path("app/uploads/gifs/").$thumbName) , "public");
+                Storage::disk('s3')->put($mediaName, file_get_contents(storage_path("app/uploads/compressedData/").$mediaName) , "public");
+                // delete both mp4 file and gif
+                unlink(storage_path('app/uploads/'.$mediaName));
+                unlink(storage_path('app/uploads/compressedData/'.$mediaName));
+                unlink(storage_path('app/uploads/gifs/'.$thumbName));
+            }else{
+                $thumb = MediaHelper::generateImageThumbnail($media, $thumbWidth, $thumbHeight);
+                $originalImage = MediaHelper::compressImage($media);
+                Storage::disk('s3')->put($thumbName, $thumb, "public");
+                Storage::disk('s3')->put($mediaName, $originalImage, "public");
+            }
+            return [ "media_name" => $mediaName, "thumb_name" => $thumbName ];
+        }catch(\Exception $ex){
+            Log::info($ex);
+            throw $ex;
+          //  return $ex->getMessage();
+           // return false;
+        }
+    }
+
+
+    public static function prepareChallenges($challenges){
+        $resp = [];
+        foreach($challenges as $challenge){
+            $owner = $challenge->owner;
+            $resp[] = [
+                "owner_name" => $owner["first_name"]." ".$owner["last_name"],
+                "avatar" => MediaHelper::getFullURL($owner["avatar"]),
+                "thumb" => MediaHelper::getFullURL($challenge["thumb"]),
+                "media" => MediaHelper::getFullURL($challenge["media"]),
+                "desc" => $challenge["description"],
+                "post_type" => $challenge["post_type"],
+                "claps" => self::getClapCount($challenge->claps),
+                "comments" => $challenge->comments->count(),
+                "uuid" => $challenge["uuid"],
+                "category" => $challenge["category"],
+                "privacy" => $challenge["privacy"],
+                "is_snapoff" => $challenge["original_post"] !=null ? true : false,
+            ];
+        }
+        return $resp;
+    }
+
+    public static function getClapCount($claps){
+        $resp = [];
+        foreach($claps as $clap){
+            $resp[$clap["user_id"]] = $claps->count();
+        }
+        return $resp;
+    }
+
+    public static function lastThreeSnapOff($chId){
+        $resp = [];
+        $totalSnapoffs = ChallengeModel::selectRaw("COUNT(*) AS count")->where("original_post", $chId)->first();
+        // last three
+        $lastThreeUsers = ChallengeModel::where("original_post", $chId)->with("owner")->orderBy("created_at", "desc")->limit(3)->get();
+        foreach($lastThreeUsers as $user){
+            $resp[] = [
+                "avatar" => MediaHelper::getFullURL($user["owner"]["avatar"])
+            ];
+        }
+        return ["users" => $resp, "total" => $totalSnapoffs["count"]];
+    }
+}

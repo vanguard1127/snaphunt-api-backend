@@ -1,6 +1,7 @@
 <?php
 namespace App\Traits;
 
+use App\Helpers\MediaHelper;
 use App\Models\Friend;
 
 trait NotificationTrait{
@@ -12,7 +13,7 @@ trait NotificationTrait{
 
         foreach ($pendingRequests as $request) {
             $resp["data"][0]["data"][] = [
-                "avatar" => $this->getFullURL($request->follower["avatar"]),
+                "avatar" => MediaHelper::getFullURL($request->follower["avatar"]),
                 "full_name" => $request->follower["first_name"]. " ". $request->follower["last_name"],
                 "username" => $request->follower["username"],
                 "follower_id" => $request->follower["uuid"]

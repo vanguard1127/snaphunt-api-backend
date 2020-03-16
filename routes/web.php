@@ -48,4 +48,6 @@ $router->group(["prefix" => "api", 'middleware' => 'jwt.auth'], function() use($
     $router->get('/sponsor/challenge', ['uses' => 'SponsorController@getSponsorChallenge']);
     $router->get('/sponsor/challenge/posts', ['uses' => 'SponsorController@getSponsorChallengePosts']);
     $router->post('/getFriends', ['uses' => 'FriendController@getFreinds']);
+    $router->post('/saveHunt', ['uses' => 'HuntController@saveHunt']);
+    $router->get('/getHunts', ['uses' => 'HuntController@getHunts']);
 });

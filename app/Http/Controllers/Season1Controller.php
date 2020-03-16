@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\MediaHelper;
 use App\Models\ChallengeModel;
 use Illuminate\Http\Request;
 
@@ -18,7 +19,7 @@ class Season1Controller extends Controller
             foreach($challenges as $ch){
                 $resp[] = [
                     "uuid" => $ch["uuid"],
-                    "media" => $this->getFullURL($ch["media"]),
+                    "media" => MediaHelper::getFullURL($ch["media"]),
                     "desc" => $ch["description"],
                     "category" => $ch["category"],
                     "privacy" => $ch["privacy"]

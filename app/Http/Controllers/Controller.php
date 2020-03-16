@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Traits\CommonTrait;
 use App\Traits\HttpTrait;
 use App\Traits\MediaTrait;
 use App\Traits\NotificationTrait;
@@ -14,7 +13,7 @@ use Tymon\JWTAuth\Facades\JWTAuth;
 
 class Controller extends BaseController
 {
-    use HttpTrait, MediaTrait, CommonTrait, NotificationTrait;
+    use HttpTrait, NotificationTrait;
     
     public static function sendCustomResponse($message = '', $status = 400)
     {

@@ -2,15 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\ChallengeHelper;
 use App\Models\ChallengeModel;
 use App\Traits\ChallengeTrait;
-use App\Traits\CommonTrait;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
 class ChallengeController extends Controller
 {
-    use ChallengeTrait, CommonTrait;
 
     public function saveChallenge(Request $request){
         try {
@@ -19,8 +18,8 @@ class ChallengeController extends Controller
 
             $width = isset($data["width"]) ? $data["width"] : 200;
             $height = isset($data["height"]) ? $data["height"] : 200;
-
             $this->validateData($data, ChallengeModel::$createChallengeRules);
+
             if(isset($data["already_saved"]) && $data["already_saved"] == "true"){
                 $update = ChallengeModel::where("uuid", $data["uuid"])->update([
                     "description" => $data["description"],
@@ -59,7 +58,7 @@ class ChallengeController extends Controller
             $offset = isset($data["offset"]) ? $data["offset"] : 10;
 
             $challneges = ChallengeModel::where("owner_id", $user["uuid"])->where("is_draft", true)->limit($limit)->offset($offset)->get();
-            $savedChallenges = $this->prepareChallenges($challneges);
+            $savedChallenges = ChallengeHelper::prepareChallenges($challneges);
             return $this->sendData($savedChallenges);
         } catch(ValidationException $ex){
             return $this->validationError($ex);

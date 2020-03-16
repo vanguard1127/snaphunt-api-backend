@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\MediaHelper;
 use App\Models\Friend;
 use App\Models\User;
-use App\Traits\CommonTrait;
 use Illuminate\Http\Request;
 
 class ProfileController extends Controller
@@ -22,13 +22,13 @@ class ProfileController extends Controller
                 $response = [
                     "uuid" => $user['uuid'],
                     "username" => $user["username"],
-                    "avatar" =>  $this->getFullURL($user["avatar"]),
+                    "avatar" =>  MediaHelper::getFullURL($user["avatar"]),
                     "full_name" => $user['first_name']." ".$user["last_name"],
                     "challenges_count" => $user->challenges->count(),
                     "followers_count" => Friend::totalFollowers($user["uuid"]),
                     "followings_count" => Friend::totalFollowings($user["uuid"]),
                     "points" => $user["points"],
-                    "challenges" => $this->prepareChallenges($user->challenges),
+                    "challenges" => ChallengeHelper::prepareChallenges($user->challenges),
                     "unread_notifications" => $this->notifications($user)
                 ];
                 return $this->sendData($response);

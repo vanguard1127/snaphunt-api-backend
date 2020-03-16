@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\MediaHelper;
 use App\Models\Friend;
 use App\Models\User;
 use App\Models\UserSettings;
@@ -94,7 +95,7 @@ class FriendController extends Controller
                 $resp[$friendId] = [
                     "uuid" => $friendId,
                     "username" => $friendObj["username"],
-                    "avatar" => $this->getFullURL($friendObj["avatar"]),
+                    "avatar" => MediaHelper::getFullURL($friendObj["avatar"]),
                     "first_name" => $friendObj["first_name"],
                     "last_name" => $friendObj["last_name"]
                 ];

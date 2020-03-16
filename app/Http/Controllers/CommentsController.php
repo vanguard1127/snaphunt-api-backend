@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\MediaHelper;
 use App\Models\Comments;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -32,7 +33,7 @@ class CommentsController extends Controller
             $comments = Comments::where("post_id", $data["post_id"])->with("user")->orderBy("created_at", "DESC")->get();
             foreach($comments as $comment){
                 $resp[] = [
-                    "avatar" => $this->getFullURL($comment["user"]["avatar"]),
+                    "avatar" => MediaHelper::getFullURL($comment["user"]["avatar"]),
                     "username" => $comment["user"]["username"],
                     "comment" => $comment["comments"],
                     "ts" => Carbon::parse($comment["created_at"])

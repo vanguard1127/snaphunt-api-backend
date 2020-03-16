@@ -1,6 +1,8 @@
 <?php
 namespace App\Traits;
 
+use App\Helpers\ChallengeHelper;
+use App\Helpers\MediaHelper;
 use App\Models\ChallengeModel;
 use App\Models\Friend;
 use App\Models\User;
@@ -16,7 +18,7 @@ trait DiscoverTrait{
                 "uuid" => $user["uuid"],
                 "username" => $user["username"],
                 "full_name" => $user["first_name"]. " ".$user["last_name"],
-                "avatar" => $this->getFullURL($user["avatar"]),
+                "avatar" => MediaHelper::getFullURL($user["avatar"]),
                 "follow_status" => Friend::getFollowStatus($user["uuid"], $myUser["uuid"]),
                 "private" => UserSettings::isPrivate($user["uuid"]),
                 "followers_count" => Friend::totalFollowers($user["uuid"]),
@@ -38,7 +40,7 @@ trait DiscoverTrait{
         })
         ->orderBy("created_at", "DESC")->get();
 
-        return $this->prepareChallenges($challenges);
+        return ChallengeHelper::prepareChallenges($challenges);
     }
 
     public function prepareFlatUserResult($query, $myUser, $offset = 0, $limit = 15){
@@ -49,7 +51,7 @@ trait DiscoverTrait{
                 "uuid" => $user["uuid"],
                 "username" => $user["username"],
                 "full_name" => $user["first_name"]. " ".$user["last_name"],
-                "avatar" => $this->getFullURL($user["avatar"]),
+                "avatar" => MediaHelper::getFullURL($user["avatar"]),
                 "challenges" => $this->LastThreeChallenges($user),
                 "follow_status" => Friend::getFollowStatus($user["uuid"], $myUser["uuid"]),
                 "private" => UserSettings::isPrivate($user["uuid"]),
@@ -66,8 +68,8 @@ trait DiscoverTrait{
         foreach($challenges as $challenge){
             $resp[] = [
                 "owner_name" => $owner["first_name"]." ".$owner["last_name"],
-                "avatar" => $this->getFullURL($owner["avatar"]),
-                "thumb" => $this->getFullURL($challenge["thumb"]),
+                "avatar" => MediaHelper::getFullURL($owner["avatar"]),
+                "thumb" => MediaHelper::getFullURL($challenge["thumb"]),
                 "claps" => $challenge->claps->count(),
                 "uuid" => $challenge["uuid"]
             ];
@@ -95,7 +97,7 @@ trait DiscoverTrait{
                     }else{
                         $cat = ChallengeModel::where("category", $i+1)->withCount("claps")->orderBy("claps_count", "desc")->offset($categoryOffset)->limit($limit)->get();
                     }
-                    $resp[] = ["title" => $categories[$i+1], "data" => $this->prepareChallenges($cat), "category" => $i+1 ];
+                    $resp[] = ["title" => $categories[$i+1], "data" => ChallengeHelper::prepareChallenges($cat), "category" => $i+1 ];
                 }
             }
        // }
@@ -107,7 +109,7 @@ trait DiscoverTrait{
         $categories = config("general.categories");
         if(isset($categories[$categoryId])){
             $cat = ChallengeModel::where("category", $categoryId)->withCount("claps")->orderBy("claps_count", "desc")->offset($offset)->limit($limit)->get();
-            $resp = $this->prepareChallenges($cat);
+            $resp = ChallengeHelper::prepareChallenges($cat);
         }
         return $resp;
     }

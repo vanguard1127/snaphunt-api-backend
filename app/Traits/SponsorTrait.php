@@ -1,8 +1,9 @@
 <?php
 namespace App\Traits;
 
+use App\Helpers\ChallengeHelper;
+use App\Helpers\MediaHelper;
 use App\Models\ChallengeModel;
-use Illuminate\Support\Facades\DB;
 
 trait SponsorTrait{
 
@@ -13,13 +14,13 @@ trait SponsorTrait{
             $owner = $challenge->owner;
             $resp[] = [
                 "owner_name" => $owner["first_name"]." ".$owner["last_name"],
-                "avatar" => $this->getFullURL($owner["avatar"]),
-                "thumb" => $this->getFullURL($challenge["thumb"]),
-                "media" => $this->getFullURL($challenge["media"]),
+                "avatar" => MediaHelper::getFullURL($owner["avatar"]),
+                "thumb" => MediaHelper::getFullURL($challenge["thumb"]),
+                "media" => MediaHelper::getFullURL($challenge["media"]),
                 "desc" => $challenge["description"],
                 "title" => $challenge["title"],
                 "post_type" => $challenge["post_type"],
-                "last_three_snapoff" => $this->lastThreeSnapOff($challenge["uuid"]),
+                "last_three_snapoff" => ChallengeHelper::lastThreeSnapOff($challenge["uuid"]),
                 // "claps" => $this->getClapCount($challenge->claps),
                 // "comments" => $challenge->comments->count(),
                 "uuid" => $challenge["uuid"],
@@ -39,27 +40,14 @@ trait SponsorTrait{
         return $resp;
     }
 
-    public function lastThreeSnapOff($chId){
-        $resp = [];
-        $totalSnapoffs = ChallengeModel::selectRaw("COUNT(*) AS count")->where("original_post", $chId)->first();
-        // last three
-        $lastThreeUsers = ChallengeModel::where("original_post", $chId)->with("owner")->orderBy("created_at", "desc")->limit(3)->get();
-        foreach($lastThreeUsers as $user){
-            $resp[] = [
-                "avatar" => $this->getFullURL($user["owner"]["avatar"])
-            ];
-        }
-        return ["users" => $resp, "total" => $totalSnapoffs["count"]];
-    }
-
     public function prepareSponsorChallengePosts($data){
         $resp = [];
         foreach($data as $challenge){
             $resp[] = [
-                "avatar" => $this->getFullURL($challenge["owner"]["avatar"]),
+                "avatar" => MediaHelper::getFullURL($challenge["owner"]["avatar"]),
                 // "claps" => $challenge["claps_count"],
-                "media" => $this->getFullURL($challenge["media"]),
-                "thumb" => $this->getFullURL($challenge["thumb"]),
+                "media" => MediaHelper::getFullURL($challenge["media"]),
+                "thumb" => MediaHelper::getFullURL($challenge["thumb"]),
                 "owner_name" => $challenge["owner"]["first_name"]. " ". $challenge["owner"]["last_name"],
                 "desc" => $challenge["description"],
                 "post_type" => $challenge["post_type"],

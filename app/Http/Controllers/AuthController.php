@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\MediaHelper;
 use App\Models\User;
 use App\Traits\AuthTrait;
 use Carbon\Carbon;
@@ -104,7 +105,7 @@ class AuthController extends Controller
         try {
             $data = $request->all();
             $user = $this->getAuthenticatedUser();
-            return $this->sendData(["id" => $user["uuid"], "avatar" => $this->getFullURL($user["avatar"]), "username" => $user["username"] ], 200);
+            return $this->sendData(["id" => $user["uuid"], "avatar" => MediaHelper::getFullURL($user["avatar"]), "username" => $user["username"] ], 200);
         }catch (\Exception $ex) {
             return $this->errorArray($ex->getMessage());
         }
