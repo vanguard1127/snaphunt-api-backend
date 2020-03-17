@@ -2,6 +2,7 @@
 
 namespace App\Helpers;
 
+use App\Models\ChallengeModel;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 
@@ -39,7 +40,7 @@ class ChallengeHelper
     }
 
 
-    public static function prepareChallenges($challenges){
+    public static function prepareChallenges($challenges, $lastThree = false){
         $resp = [];
         foreach($challenges as $challenge){
             $owner = $challenge->owner;
@@ -56,6 +57,18 @@ class ChallengeHelper
                 "category" => $challenge["category"],
                 "privacy" => $challenge["privacy"],
                 "is_snapoff" => $challenge["original_post"] !=null ? true : false,
+                "last_three" => $lastThree ? self::lastThreeSnapOff($challenge["uuid"]) : []
+            ];
+        }
+        return $resp;
+    }
+
+
+    public static function prepareHuntChallenges($challenges){
+        $resp = [];
+        foreach($challenges as $challenge){
+            $resp[] = [
+                "desc" => $challenge["description"]
             ];
         }
         return $resp;

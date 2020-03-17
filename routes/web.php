@@ -50,4 +50,6 @@ $router->group(["prefix" => "api", 'middleware' => 'jwt.auth'], function() use($
     $router->post('/getFriends', ['uses' => 'FriendController@getFreinds']);
     $router->post('/saveHunt', ['uses' => 'HuntController@saveHunt']);
     $router->get('/getHunts', ['uses' => 'HuntController@getHunts']);
+    $router->get('/huntDetail', ['uses' => 'HuntController@huntDetail']);
+    $router->post('/joinHunt', ['uses' => 'HuntController@joinHunt']);
 });

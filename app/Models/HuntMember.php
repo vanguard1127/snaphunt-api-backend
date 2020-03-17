@@ -20,4 +20,8 @@ class HuntMember extends Model
     public function hunt(){
         return $this->hasOne("App\Models\Hunt", "uuid", "hunt_id");
     }
+
+    public function user(){
+        return $this->hasOne("App\Models\User", "uuid", "user_id");
+    }
 }

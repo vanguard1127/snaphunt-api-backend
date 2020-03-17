@@ -22,7 +22,7 @@ class Hunt extends Model
     ];
 
     public function members(){
-        return $this->hasMany("App\Models\HuntMember", "uuid", "user_id");
+        return $this->hasMany("App\Models\HuntMember", "hunt_id", "uuid");
     }
 
     public function challenges(){
@@ -53,7 +53,7 @@ class Hunt extends Model
             }
             foreach($challenges as $k => $challenge){
                 $media = $request->file("media-".$k);
-                if($mediaNames = ChallengeHelper::uploadToS3($media, $challenge["post_type"])){
+                if($mediaNames = ChallengeHelper::uploadToS3($media, $challenge["post_type"], 540, 210)){
                     $challenge["media"] = $mediaNames["media_name"];
                     $challenge["thumb"] = $mediaNames["thumb_name"];
                     $challenge["type"] = "hunt";

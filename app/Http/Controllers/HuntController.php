@@ -43,4 +43,31 @@ class HuntController extends Controller
             return $this->errorArray($ex->getMessage().$ex->getLine().$ex->getFile());
         }
     }
+
+
+    public function huntDetail(Request $request){
+        try {
+            $data = $request->all();
+            // $user = $this->getAuthenticatedUser();
+            $data = HuntHelper::prepareHuntDetail($data);
+            return $this->sendData($data);
+        } catch(ValidationException $ex){
+            return $this->validationError($ex);
+        }catch (\Exception $ex) {
+            return $this->errorArray($ex->getMessage().$ex->getLine().$ex->getFile());
+        }
+    }
+
+    public function joinHunt(Request $request){
+        try {
+            $data = $request->all();
+            $user = $this->getAuthenticatedUser();
+            HuntHelper::processJoinHunt($data, $user);
+            return $this->sendData(["uuid" => $data["hunt_id"]]);
+        } catch(ValidationException $ex){
+            return $this->validationError($ex);
+        }catch (\Exception $ex) {
+            return $this->sendCustomResponse($ex->getMessage());
+        }
+    }
 }
