@@ -18,7 +18,7 @@ class ChallengeModel extends Model
         "description",
         "category",
         "privacy",
-        "media",
+        "media", 
         "status",
         "is_draft",
         "thumb",
@@ -58,7 +58,7 @@ class ChallengeModel extends Model
                 "media" => $data["media"],
                 "is_draft" => $data["is_draft"],
                 "thumb" => $data["thumb"],
-                "hunt_id" => isset($data["hunt_id"]) ? $data["hunt_id"] : null,
+                "hunt_id" => (isset($data["hunt_id"]) && $data["hunt_id"] != "null") ? $data["hunt_id"] : null,
                 "type" => isset($data["type"]) ? $data["type"] : "user",
                 "title" => isset($data["title"]) ? $data["title"] : null,
                 "original_post" => $data["uuid"] != "null" ? $data["uuid"] : null

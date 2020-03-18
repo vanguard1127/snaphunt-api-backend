@@ -58,10 +58,10 @@ class DiscoverController extends Controller
     public function discoverData(Request $request){
         try {
             $data = $request->all();
-            // $user = $this->getAuthenticatedUser();
+            $user = $this->getAuthenticatedUser();
             $offset = isset($data["offset"]) ? $data["offset"] : 0;
             $limit = isset($data["limit"]) ? $data["limit"] : 3;
-            $resp = $this->prepareDiscoverData($offset, $limit);
+            $resp = $this->prepareDiscoverData($user, $offset, $limit);
             return $this->sendData($resp);
         } catch(ValidationException $ex){
             return $this->validationError($ex);
@@ -73,10 +73,11 @@ class DiscoverController extends Controller
     public function categoryData(Request $request){
         try {
             $data = $request->all();
+            $user = $this->getAuthenticatedUser();
             $this->validateData($data, ["category_id" => "required"]);
             $offset = isset($data["offset"]) ? $data["offset"] : 0;
             $limit = isset($data["limit"]) ? $data["limit"] : 3;
-            $resp = $this->prepareCategoryData($data["category_id"],$offset, $limit);
+            $resp = $this->prepareCategoryData($user["uuid"], $data["category_id"],$offset, $limit);
             return $this->sendData($resp);
         } catch(ValidationException $ex){
             return $this->validationError($ex);

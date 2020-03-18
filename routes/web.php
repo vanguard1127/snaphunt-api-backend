@@ -52,4 +52,5 @@ $router->group(["prefix" => "api", 'middleware' => 'jwt.auth'], function() use($
     $router->get('/getHunts', ['uses' => 'HuntController@getHunts']);
     $router->get('/huntDetail', ['uses' => 'HuntController@huntDetail']);
     $router->post('/joinHunt', ['uses' => 'HuntController@joinHunt']);
+    $router->get('/huntSnapOffs', ['uses' => 'HuntController@getHuntChallengePosts']);
 });

@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Storage;
 
 class ChallengeHelper
 {
-    public static function uploadToS3($media, $type, $thumbWidth = 200, $thumbHeight = 200 ){
+    public static function uploadToS3($media, $type, $thumbWidth = 540, $thumbHeight = 340 ){
         try{
             // save media to local disk first
             $mediaName = time().'_' . $media->getClientOriginalName();
@@ -40,7 +40,7 @@ class ChallengeHelper
     }
 
 
-    public static function prepareChallenges($challenges, $lastThree = false){
+    public static function prepareChallenges($challenges, $userId , $lastThree = false){
         $resp = [];
         foreach($challenges as $challenge){
             $owner = $challenge->owner;
@@ -57,7 +57,8 @@ class ChallengeHelper
                 "category" => $challenge["category"],
                 "privacy" => $challenge["privacy"],
                 "is_snapoff" => $challenge["original_post"] !=null ? true : false,
-                "last_three" => $lastThree ? self::lastThreeSnapOff($challenge["uuid"]) : []
+                "last_three" => $lastThree ? self::lastThreeSnapOff($challenge["uuid"]) : [],
+                "snapoffed" => ChallengeHelper::snapOffByUser($userId, $challenge["uuid"])
             ];
         }
         return $resp;
@@ -93,5 +94,9 @@ class ChallengeHelper
             ];
         }
         return ["users" => $resp, "total" => $totalSnapoffs["count"]];
+    }
+
+    public static function snapOffByUser($userId, $postId){
+        return ChallengeModel::where("owner_id", $userId)->where("original_post", $postId)->first();
     }
 }

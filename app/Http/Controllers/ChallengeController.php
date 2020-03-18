@@ -16,8 +16,8 @@ class ChallengeController extends Controller
             $data = $request->all();
             $user = $this->getAuthenticatedUser();
 
-            $width = isset($data["width"]) ? $data["width"] : 200;
-            $height = isset($data["height"]) ? $data["height"] : 200;
+            $width = isset($data["width"]) ? $data["width"] : 540;
+            $height = isset($data["height"]) ? $data["height"] : 340;
             
             $this->validateData($data, ChallengeModel::$createChallengeRules);
 
@@ -33,7 +33,7 @@ class ChallengeController extends Controller
                 }
             }else{
                 if($request->file("media")->isValid()){
-                    if($mediaNames = $this->uploadToS3($data["media"], $data["post_type"], $width, $height)){
+                    if($mediaNames = ChallengeHelper::uploadToS3($data["media"], $data["post_type"], $width, $height)){
                         $data["media"] = $mediaNames["media_name"];
                         $data["thumb"] = $mediaNames["thumb_name"];
                         ChallengeModel::createChallenge($data, $user["uuid"]);
@@ -59,7 +59,7 @@ class ChallengeController extends Controller
             $offset = isset($data["offset"]) ? $data["offset"] : 10;
 
             $challneges = ChallengeModel::where("owner_id", $user["uuid"])->where("is_draft", true)->limit($limit)->offset($offset)->get();
-            $savedChallenges = ChallengeHelper::prepareChallenges($challneges);
+            $savedChallenges = ChallengeHelper::prepareChallenges($challneges, $user["uuid"]);
             return $this->sendData($savedChallenges);
         } catch(ValidationException $ex){
             return $this->validationError($ex);

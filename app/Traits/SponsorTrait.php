@@ -32,14 +32,6 @@ trait SponsorTrait{
         return $resp;
     }
 
-    public function getClapCount($claps){
-        $resp = [];
-        foreach($claps as $clap){
-            $resp[$clap["user_id"]] = $claps->count();
-        }
-        return $resp;
-    }
-
     public function prepareSponsorChallengePosts($data){
         $resp = [];
         foreach($data as $challenge){
@@ -51,7 +43,7 @@ trait SponsorTrait{
                 "owner_name" => $challenge["owner"]["first_name"]. " ". $challenge["owner"]["last_name"],
                 "desc" => $challenge["description"],
                 "post_type" => $challenge["post_type"],
-                "claps" => $this->getClapCount($challenge->claps),
+                "claps" =>  ChallengeHelper::getClapCount($challenge->claps),
                 "comments" => $challenge->comments->count(),
                 "uuid" => $challenge["uuid"],
                 "category" => $challenge["category"],

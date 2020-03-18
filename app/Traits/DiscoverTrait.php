@@ -40,7 +40,7 @@ trait DiscoverTrait{
         })
         ->orderBy("created_at", "DESC")->get();
 
-        return ChallengeHelper::prepareChallenges($challenges);
+        return ChallengeHelper::prepareChallenges($challenges, $myUser["uuid"]);
     }
 
     public function prepareFlatUserResult($query, $myUser, $offset = 0, $limit = 15){
@@ -77,7 +77,7 @@ trait DiscoverTrait{
         return $resp;
     }
 
-    public function prepareDiscoverData($offset, $limit, $categoryOffset = 0){
+    public function prepareDiscoverData($user, $offset, $limit, $categoryOffset = 0){
         $resp = [];
         $categories = config("general.categories");
         // if($offset <= 5){
@@ -97,19 +97,19 @@ trait DiscoverTrait{
                     }else{
                         $cat = ChallengeModel::where("category", $i+1)->withCount("claps")->orderBy("claps_count", "desc")->offset($categoryOffset)->limit($limit)->get();
                     }
-                    $resp[] = ["title" => $categories[$i+1], "data" => ChallengeHelper::prepareChallenges($cat), "category" => $i+1 ];
+                    $resp[] = ["title" => $categories[$i+1], "data" => ChallengeHelper::prepareChallenges($cat, $user["uuid"]), "category" => $i+1 ];
                 }
             }
        // }
         return $resp;
     }
 
-    public function prepareCategoryData($categoryId, $offset, $limit){
+    public function prepareCategoryData($user, $categoryId, $offset, $limit){
         $resp = [];
         $categories = config("general.categories");
         if(isset($categories[$categoryId])){
             $cat = ChallengeModel::where("category", $categoryId)->withCount("claps")->orderBy("claps_count", "desc")->offset($offset)->limit($limit)->get();
-            $resp = ChallengeHelper::prepareChallenges($cat);
+            $resp = ChallengeHelper::prepareChallenges($cat, $user["uuid"]);
         }
         return $resp;
     }

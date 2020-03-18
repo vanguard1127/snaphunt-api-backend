@@ -40,15 +40,17 @@ class HuntHelper{
     }
 
 
-    public static function prepareHuntDetail($data){
+    public static function prepareHuntDetail($data, $user){
         $resp = [];
-        $hunt = Hunt::where("uuid", $data["uuid"])->with("members")->with("challenges")->first();
+        $hunt = Hunt::where("uuid", $data["uuid"])->with("members")->with(["challenges" => function($sql){
+            $sql->where("original_post", null);
+        }])->first();
 
         $resp = [
             "title" => $hunt["title"],
             "members" => self::prepareMembers($hunt["members"]),
             "uuid" => $hunt["uuid"],
-            "challenges" => ChallengeHelper::prepareChallenges($hunt["challenges"], true)
+            "challenges" => ChallengeHelper::prepareChallenges($hunt["challenges"], $user["uuid"], true),
         ];
         return $resp;
     }
@@ -82,6 +84,28 @@ class HuntHelper{
             ]);
         }
     }   
+
+    public static function prepareHuntChallengePosts($data){
+        $resp = [];
+        foreach($data as $challenge){
+            $resp[] = [
+                "avatar" => MediaHelper::getFullURL($challenge["owner"]["avatar"]),
+                // "claps" => $challenge["claps_count"],
+                "media" => MediaHelper::getFullURL($challenge["media"]),
+                "thumb" => MediaHelper::getFullURL($challenge["thumb"]),
+                "owner_name" => $challenge["owner"]["first_name"]. " ". $challenge["owner"]["last_name"],
+                "desc" => $challenge["description"],
+                "post_type" => $challenge["post_type"],
+                "claps" => ChallengeHelper::getClapCount($challenge->claps),
+                "comments" => $challenge->comments->count(),
+                "uuid" => $challenge["uuid"],
+                "category" => $challenge["category"],
+                "privacy" => $challenge["privacy"],
+                "is_snapoff" => $challenge["original_post"] !=null ? true : false
+            ];
+        }
+        return $resp;
+    }
 }
 
 ?>
