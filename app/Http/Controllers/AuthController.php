@@ -8,6 +8,7 @@ use App\Traits\AuthTrait;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
@@ -33,6 +34,48 @@ class AuthController extends Controller
                 return $this->sendCustomResponse("Verification code sent", 200);
             }
             return $this->errorArray();
+        } catch(ValidationException $ex){
+            return $this->validationError($ex);
+        }catch (\Exception $ex) {
+            return $this->errorArray($ex->getMessage());
+        }
+    }
+
+    public function updateUser(Request $request){
+        try {
+            $data = $request->all();
+            $user = $this->getAuthenticatedUser();
+
+            if(isset($data["avatar"])){
+                if($request->file("avatar")->isValid()){
+                // upload profile picture
+                $media = $data["avatar"];
+                $mediaName = time().'_' . $media->getClientOriginalName();
+                $thumbName = time().'_thumb_' . $media->getClientOriginalName();
+                $thumb = MediaHelper::generateImageThumbnail($media, 200, 200);
+                $originalImage = MediaHelper::compressImage($media);
+                Storage::disk('s3')->put($thumbName, $thumb, "public");
+                Storage::disk('s3')->put($mediaName, $originalImage, "public");
+                Storage::disk('s3')->delete([$user["avatar"], $user["thumb"]]);
+                $data["avatar"] = $mediaName;
+                $data["thumb"] = $thumbName;
+
+                }else{
+                    return $this->sendCustomResponse();
+                }
+            }
+            if(User::where("uuid", $user["uuid"])->update($data)){
+                $user = User::find($user["uuid"]);
+                return $this->sendData([
+                    "id" => $user["uuid"],
+                    "avatar" => MediaHelper::getFullURL($user["avatar"]),
+                    "thumb" => MediaHelper::getFullURL($user["thumb"]),
+                    "username" => $user["username"],
+                    "first_name" => $user["first_name"],
+                    "last_name" => $user["last_name"]
+                     ], 200);
+            }
+            return $this->sendCustomResponse();
         } catch(ValidationException $ex){
             return $this->validationError($ex);
         }catch (\Exception $ex) {
@@ -105,7 +148,14 @@ class AuthController extends Controller
         try {
             $data = $request->all();
             $user = $this->getAuthenticatedUser();
-            return $this->sendData(["id" => $user["uuid"], "avatar" => MediaHelper::getFullURL($user["avatar"]), "username" => $user["username"] ], 200);
+            return $this->sendData([
+                "id" => $user["uuid"],
+                "avatar" => MediaHelper::getFullURL($user["avatar"]),
+                "thumb" => MediaHelper::getFullURL($user["thumb"]),
+                "username" => $user["username"],
+                "first_name" => $user["first_name"],
+                "last_name" => $user["last_name"]
+                 ], 200);
         }catch (\Exception $ex) {
             return $this->errorArray($ex->getMessage());
         }

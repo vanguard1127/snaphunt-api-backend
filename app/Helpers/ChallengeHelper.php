@@ -3,6 +3,7 @@
 namespace App\Helpers;
 
 use App\Models\ChallengeModel;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 
@@ -53,8 +54,9 @@ class ChallengeHelper
                 "post_type" => $challenge["post_type"],
                 "claps" => self::getClapCount($challenge->claps),
                 "comments" => $challenge->comments->count(),
+                "snapoff_count" => self::snapOffCount($challenge["uuid"]),
                 "uuid" => $challenge["uuid"],
-                "category" => $challenge["category"],
+                "category" => $challenge["category"] ? $challenge["category"] : $challenge["type"],
                 "privacy" => $challenge["privacy"],
                 "is_snapoff" => $challenge["original_post"] !=null ? true : false,
                 "last_three" => $lastThree ? self::lastThreeSnapOff($challenge["uuid"]) : [],
@@ -64,6 +66,10 @@ class ChallengeHelper
         return $resp;
     }
 
+    public static function snapOffCount($chId){
+        $count = ChallengeModel::selectRaw("COUNT(*) as count")->where("original_post", $chId)->first();
+        return $count["count"];
+    }   
 
     public static function prepareHuntChallenges($challenges){
         $resp = [];
