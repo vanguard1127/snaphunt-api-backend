@@ -63,7 +63,7 @@ class ChallengeModel extends Model
                 "post_type" => $data["post_type"],
                 "owner_id" => isset($data["owner_id"]) ? $data["owner_id"] : $userId,
                 "description" => ($data["description"] != "" ? $data["description"] : null),
-                "category" => self::getCategory($data["category"], $data["type"]),
+                "category" => self::getCategory($data["category"], isset($data["type"]) ? $data["type"] : "user"),
                 "privacy" => $data["privacy"],
                 "media" => $data["media"],
                 "is_draft" => $data["is_draft"],
