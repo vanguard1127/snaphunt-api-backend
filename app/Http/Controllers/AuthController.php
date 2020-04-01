@@ -56,7 +56,10 @@ class AuthController extends Controller
                 $originalImage = MediaHelper::compressImage($media);
                 Storage::disk('s3')->put($thumbName, $thumb, "public");
                 Storage::disk('s3')->put($mediaName, $originalImage, "public");
-                Storage::disk('s3')->delete([$user["avatar"], $user["thumb"]]);
+                
+                if($user["avatar"] != "profile.png"){
+                    Storage::disk('s3')->delete([$user["avatar"], $user["thumb"]]);
+                }
                 $data["avatar"] = $mediaName;
                 $data["thumb"] = $thumbName;
 

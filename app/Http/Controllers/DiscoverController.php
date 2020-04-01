@@ -29,9 +29,24 @@ class DiscoverController extends Controller
             $data = $request->all();
             $user = $this->getAuthenticatedUser();
             $this->validateData($data, ["query" => "required"]);
-            $resp = [ [ "data" => [], "title" => "USERS" ], ["data" => [], "title" => "CHALLENGES" ] ];
-            $resp[0]["data"] = $this->prepareSearchUsers($data["query"], $user);
-            $resp[1]["data"] = $this->prepareSearchCallenges($data["query"], $user);
+            $resp = [];
+            $userData = $this->prepareSearchUsers($data["query"], $user);
+            $challengeData = $this->prepareSearchCallenges($data["query"], $user);
+
+            if($userData){
+                $resp[] = [
+                    "data" => $userData,
+                    "title" => "USERS"
+                ];
+            }
+
+            if($challengeData){
+                $resp[] = [
+                    "data" => $challengeData,
+                    "title" => "CHALLENGES"
+                ];
+            }
+
             return $this->sendData($resp);
         } catch(ValidationException $ex){
             return $this->validationError($ex);
