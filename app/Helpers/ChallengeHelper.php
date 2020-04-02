@@ -52,6 +52,7 @@ class ChallengeHelper
                 "media" => MediaHelper::getFullURL($challenge["media"]),
                 "desc" => $challenge["description"],
                 "post_type" => $challenge["post_type"],
+                "is_draft" => $challenge["is_draft"],
                 "claps" => self::getClapCount($challenge->claps),
                 "comments" => $challenge->comments->count(),
                 "snapoff_count" => self::snapOffCount($challenge["uuid"]),

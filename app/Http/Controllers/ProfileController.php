@@ -14,6 +14,8 @@ class ProfileController extends Controller
     public function getProfile(Request $request){
         try {
             $data = $request->all();
+            $drafts = 0;
+            $authUser = $this->getAuthenticatedUser();
             $this->validateData($data, [
                 "limit" => "required",
                 "offset" => "required"
@@ -21,7 +23,13 @@ class ProfileController extends Controller
             if(isset($data['id'])){
                 $userId = $data['id'];
             }else{
-                $userId = $this->getAuthenticatedUser()['uuid'];
+                $userId = $authUser['uuid'];
+            }
+
+            if($authUser["uuid"] == $userId){
+                if($draftCount = ChallengeModel::selectRaw("COUNT(*) as drafts")->where("is_draft", true)->where("owner_id", $userId)->first()){
+                    $drafts = $draftCount["drafts"];
+                }
             }
 
             if($data["offset"] > 0){
@@ -49,8 +57,10 @@ class ProfileController extends Controller
                         "followings_count" => Friend::totalFollowings($user["uuid"]),
                         "points" => $user["points"],
                         "challenges" => ChallengeHelper::prepareChallenges($user->challenges, $user["uuid"]),
-                        "unread_notifications" => $this->notifications($user)
+                        "unread_notifications" => $this->notifications($user),
+                        "drafts" => $drafts
                     ];
+
                     return $this->sendData($response);
                 }
             }

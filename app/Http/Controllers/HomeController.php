@@ -18,7 +18,7 @@ class HomeController extends Controller
         } catch(ValidationException $ex){
             return $this->validationError($ex);
         }catch (\Exception $ex) {
-            return $this->errorArray($ex->getMessage());
+            return $this->errorArray($ex->getMessage().$ex->getFile().$ex->getLine());
         }
     }
 }

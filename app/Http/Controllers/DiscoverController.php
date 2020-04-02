@@ -77,7 +77,7 @@ class DiscoverController extends Controller
             $user = $this->getAuthenticatedUser();
             $offset = isset($data["offset"]) ? $data["offset"] : 0;
             $limit = isset($data["limit"]) ? $data["limit"] : 3;
-            $resp = $this->prepareFlatDiscoverData($user, $offset, $limit, explode(",",$data["cat_ids"]));
+            $resp = $this->prepareFlatDiscoverData($user, $offset, $limit,$data["cat_ids"]);
             return $this->sendData($resp);
         } catch(ValidationException $ex){
             return $this->validationError($ex);

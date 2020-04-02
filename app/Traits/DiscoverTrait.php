@@ -94,7 +94,12 @@ trait DiscoverTrait{
     }
 
     public function prepareFlatDiscoverData($user, $offset, $limit, $categoryIds){
-        $challenges =  ChallengeModel::whereIn("category", $categoryIds)->withCount("claps")->orderBy("claps_count", "desc")->offset($offset)->limit($limit)->get();
+        if($categoryIds == "all"){
+            $challenges =  ChallengeModel::withCount("claps")->orderBy("claps_count", "desc")->offset($offset)->limit($limit)->get();
+        }else{
+            $catIds = explode(",",$categoryIds);
+            $challenges =  ChallengeModel::whereIn("category", $catIds)->withCount("claps")->orderBy("claps_count", "desc")->offset($offset)->limit($limit)->get();
+        }
         return ChallengeHelper::prepareChallenges($challenges, $user["uuid"]);
     }
 

@@ -18,13 +18,13 @@ class ChallengeController extends Controller
 
             $width = isset($data["width"]) ? $data["width"] : 540;
             $height = isset($data["height"]) ? $data["height"] : 340;
-            
             $this->validateData($data, ChallengeModel::$createChallengeRules);
 
             if(isset($data["already_saved"]) && $data["already_saved"] == "true"){
+
                 $update = ChallengeModel::where("uuid", $data["uuid"])->update([
                     "description" => $data["description"],
-                    "category" => is_string($data["category"]) ? null : $data["category"],
+                    "category" => $data["category"],
                     "privacy" => $data["privacy"],
                     "is_draft" => false
                 ]);
