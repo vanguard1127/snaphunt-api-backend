@@ -15,7 +15,7 @@ class Season1Controller extends Controller
             $offset = isset($data["offset"]) ? $data["offset"] : 0;
 
             $resp = [];
-            $challenges = ChallengeModel::where("type", "season1")->offset($offset)->limit($limit)->get();
+            $challenges = ChallengeModel::where("type", "season1")->offset($offset)->limit($limit)->orderBy("created_at", "ASC")->get();
             foreach($challenges as $ch){
                 $resp[] = [
                     "uuid" => $ch["uuid"],
