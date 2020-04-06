@@ -16,12 +16,15 @@ class ProfileController extends Controller
             $data = $request->all();
             $drafts = 0;
             $authUser = $this->getAuthenticatedUser();
+            $requestStatus = null;
+
             $this->validateData($data, [
                 "limit" => "required",
                 "offset" => "required"
             ]);
-            if(isset($data['id'])){
+            if(isset($data['id']) && $data["id"] != "null"){
                 $userId = $data['id'];
+                $requestStatus = Friend::getFollowStatus($userId, $authUser["uuid"]);
             }else{
                 $userId = $authUser['uuid'];
             }
@@ -58,7 +61,8 @@ class ProfileController extends Controller
                         "points" => $user["points"],
                         "challenges" => ChallengeHelper::prepareChallenges($user->challenges, $user["uuid"]),
                         "unread_notifications" => $this->notifications($user),
-                        "drafts" => $drafts
+                        "drafts" => $drafts,
+                        "request_status" => $requestStatus
                     ];
 
                     return $this->sendData($response);
