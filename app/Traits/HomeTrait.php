@@ -12,7 +12,7 @@ trait HomeTrait{
         $resp = [];
         $offset = isset($data["offset"]) ? $data["offset"] : 0;
         $limit = isset($data["limit"]) ? $data["limit"] :20;
-        $followers = Friend::where("follower_id", $user["uuid"])->pluck("following_id");
+        $followers = Friend::where("follower_id", $user["uuid"])->where("status", "active")->pluck("following_id");
         $followers[] = $user["uuid"];
         $posts = ChallengeModel::whereIn("owner_id", $followers)
           ->where("is_draft", false)

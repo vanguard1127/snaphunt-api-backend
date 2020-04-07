@@ -46,10 +46,12 @@ class ChallengeHelper
         foreach($challenges as $challenge){
             $owner = $challenge->owner;
             $resp[] = [
-                "owner_name" => $owner["first_name"]." ".$owner["last_name"],
-                // "owner_username" => $owner["username"],
-                "owner_id" => $owner["uuid"],
-                "avatar" => MediaHelper::getFullURL($owner["avatar"]),
+                "owner" => [ 
+                    "name" => $owner["first_name"]." ".$owner["last_name"],
+                    "username" => $owner["username"],
+                    "id" => $owner["uuid"],
+                    "avatar" => MediaHelper::getFullURL($owner["avatar"])
+                ],
                 "thumb" => MediaHelper::getFullURL($challenge["thumb"]),
                 "media" => MediaHelper::getFullURL($challenge["media"]),
                 "desc" => $challenge["description"],

@@ -29,7 +29,7 @@ class FriendController extends Controller
                         Friend::makeFriends($data["following_id"], $user["uuid"]);
                         $msg = "Follow request sent to ".$followingUser["username"];
                         $followingMsg = $user["username"]. " sent you follow request";
-                        $followingUser->notify(new FollowNotification($user->uuid, $followingMsg));
+                        // $followingUser->notify(new FollowNotification($user->uuid, $followingMsg));
                     }else{
                         Friend::makeFriends($data["following_id"], $user["uuid"], "active");
                         $msg = "Started following ".$followingUser["username"];

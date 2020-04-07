@@ -7,6 +7,7 @@ use App\Helpers\MediaHelper;
 use App\Models\ChallengeModel;
 use App\Models\Friend;
 use App\Models\User;
+use App\Models\UserSettings;
 use Illuminate\Http\Request;
 
 class ProfileController extends Controller
@@ -52,9 +53,10 @@ class ProfileController extends Controller
                 if($user){
                     $response = [
                         "uuid" => $user['uuid'],
-                        "username" => $user["username"],
-                        "avatar" =>  MediaHelper::getFullURL($user["avatar"]),
-                        "full_name" => $user['first_name']." ".$user["last_name"],
+                        "is_private" => UserSettings::isPrivate($user["uuid"]),
+                        // "username" => $user["username"],
+                        // "avatar" =>  MediaHelper::getFullURL($user["avatar"]),
+                        // "full_name" => $user['first_name']." ".$user["last_name"],
                         "challenges_count" => $user->challenges->count(),
                         "followers_count" => Friend::totalFollowers($user["uuid"]),
                         "followings_count" => Friend::totalFollowings($user["uuid"]),
