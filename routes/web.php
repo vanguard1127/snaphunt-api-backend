@@ -54,4 +54,7 @@ $router->group(["prefix" => "api", 'middleware' => 'jwt.auth'], function() use($
     $router->get('/huntDetail', ['uses' => 'HuntController@huntDetail']);
     $router->post('/joinHunt', ['uses' => 'HuntController@joinHunt']);
     $router->get('/huntSnapOffs', ['uses' => 'HuntController@getHuntChallengePosts']);
+    $router->post('/exponent/devices/subscribe', ['uses' => 'ExpoController@saveExpoToken']);
+    $router->post('/exponent/devices/unsubscribe', ['uses' => 'ExpoController@removeExpoToken']);
+    $router->get('/activities', ['uses' => 'ActivityController@getActivities']);
 });

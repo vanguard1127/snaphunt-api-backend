@@ -17,8 +17,20 @@ trait HttpTrait{
         }
     }
 
-    public function postRequest(){
-
+    public function postRequest($url, $data, $headers = []){
+        try{
+            $client = new \GuzzleHttp\Client(['http_errors' => false]);
+            $resp =  $client->request("POST", $url, [
+                'headers' => $headers,
+                'body' => json_encode($data)
+            ]);
+            if($resp->getStatusCode() == 200){
+                return json_decode($resp->getBody()->getContents(),true);
+            }
+            throw new Exception($resp->getBody()->getContents());
+        }catch(\Exception $ex){
+            throw new Exception($ex);
+        }
     }
 
 }

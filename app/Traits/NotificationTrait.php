@@ -20,16 +20,6 @@ trait NotificationTrait{
             ];
             $count++;
         }
-        // foreach ($user->unreadNotifications as $notification) {
-        //     if($notification->type == "App\Notifications\FollowNotification"){
-        //         $resp["data"][0]["data"][] = [
-        //             "avatar" => $this->getFullURL($user["avatar"]),
-        //             "full_name" => $user["first_name"], " ". $user["last_name"],
-        //             "username" => $user["username"]
-        //         ];
-        //     }
-        //     $count++;
-        // }
         $resp["count"] = $count;
         return $resp;
     }

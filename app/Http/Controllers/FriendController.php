@@ -29,14 +29,19 @@ class FriendController extends Controller
                         Friend::makeFriends($data["following_id"], $user["uuid"]);
                         $msg = "Follow request sent to ".$followingUser["username"];
                         $followingMsg = $user["username"]. " sent you follow request";
+                        $this->sendPushNotification($followingUser, $user["username"], $followingMsg, ["route" => "ActivityScreen", "data" => []]);
                         // $followingUser->notify(new FollowNotification($user->uuid, $followingMsg));
                     }else{
                         Friend::makeFriends($data["following_id"], $user["uuid"], "active");
                         $msg = "Started following ".$followingUser["username"];
+                        $followingMsg = $user["username"]. " started following you";
+                        $this->sendPushNotification($followingUser, $user["username"], $followingMsg, ["route" => "Home", "data" => []]);
                     }
                 }else{
                     Friend::makeFriends($data["following_id"], $user["uuid"], "active");
                     $msg = "Started following ".$followingUser["username"];
+                    $followingMsg = $user["username"]. " started following you";
+                    $this->sendPushNotification($followingUser, $user["username"], $followingMsg, ["route" => "Home", "data" => []]);
                 }
             }
             return $this->sendCustomResponse($msg, 200);

@@ -67,4 +67,22 @@ class Controller extends BaseController
         return $user;
     }
 
+    public function sendPushNotification($toUser, $title, $message, $data){
+        $URL = 'https://exp.host/--/api/v2/push/send';
+        $headers = [
+            "Accept" => 'application/json',
+            'Accept-encoding' => 'gzip, deflate',
+            'Content-Type' => 'application/json',
+        ];
+        $message = [
+            "to" => $toUser["expo_token"],
+            "sound" => 'default',
+            "title" => $title,
+            "body" => $message,
+            "data" =>  $data,
+            "_displayInForeground" =>  true,
+        ];
+        $this->postRequest($URL, $message, $headers);
+    }
+
 }

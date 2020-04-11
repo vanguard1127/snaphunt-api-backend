@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "98cb61755fb0d39c606efed30e05a30c",
+    "content-hash": "4fd8da5f8d67840f2b21b34462fa2bc8",
     "packages": [
         {
             "name": "alchemy/binary-driver",
@@ -67,6 +67,48 @@
                 "driver"
             ],
             "time": "2020-02-12T19:35:11+00:00"
+        },
+        {
+            "name": "alymosul/exponent-server-sdk-php",
+            "version": "1.2.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Alymosul/exponent-server-sdk-php.git",
+                "reference": "e4e89b289ec37dc92e940d91d8f3eb33d7ffc2b2"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Alymosul/exponent-server-sdk-php/zipball/e4e89b289ec37dc92e940d91d8f3eb33d7ffc2b2",
+                "reference": "e4e89b289ec37dc92e940d91d8f3eb33d7ffc2b2",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "ExponentPhpSDK\\": "lib"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Aly Suleiman",
+                    "email": "alymosul@gmail.com"
+                }
+            ],
+            "description": "Server-side library for working with Expo push notifications using PHP",
+            "keywords": [
+                "expo",
+                "exponent",
+                "notifications",
+                "push"
+            ],
+            "time": "2019-12-11T11:19:40+00:00"
         },
         {
             "name": "asm89/stack-cors",
@@ -3035,6 +3077,7 @@
                     "email": "jakub.onderka@gmail.com"
                 }
             ],
+            "abandoned": "php-parallel-lint/php-console-color",
             "time": "2018-09-29T17:23:10+00:00"
         },
         {
@@ -3081,6 +3124,7 @@
                 }
             ],
             "description": "Highlight PHP code in terminal",
+            "abandoned": "php-parallel-lint/php-console-highlighter",
             "time": "2018-09-29T18:48:56+00:00"
         },
         {
