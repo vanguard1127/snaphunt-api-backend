@@ -1,6 +1,8 @@
 <?php
 namespace App\Traits;
 
+use Exception;
+
 trait HttpTrait{
 
     public function fbGetRequest($accessToken, $endpoint){
