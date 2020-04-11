@@ -36,6 +36,11 @@
             15 => "Animals",
             16 => "Pranks",
             17 => "Season1"
+        ],
+        "points" => [
+            "clap" => 2,
+            "createChallenge" => 3,
+            "snapoff" => 5
         ]
     ]
 

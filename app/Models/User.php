@@ -70,6 +70,18 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         return $this->hasMany("App\Models\ChallengeModel", "owner_id", "uuid");
     }
 
+    public static function updatePoints($userId, $points, $type = "add"){
+        $user = User::find($userId);
+        if($user){
+            if($type == "add"){
+                $user->points = $user->points + $points;
+            }else{
+                $user->points = $user->points - $points;
+            }
+            $user->save();
+        }
+    }
+
     public static function searchUsers($query, $myUser){
         $users = static::select("username")->where("uuid", "!=", $myUser["uuid"])->where(function($sql) use($query){
             $sql->where("username", "ilike", "%$query%")->orWhere("first_name", "like", "%$query%")->orWhere("last_name", "like", "%$query%");

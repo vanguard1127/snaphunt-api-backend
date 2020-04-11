@@ -58,7 +58,8 @@ class ChallengeModel extends Model
     }
 
     public static function createChallenge($data, $userId){
-        return static::create(
+
+        $obj =  static::create(
             [
                 "post_type" => $data["post_type"],
                 "owner_id" => isset($data["owner_id"]) ? $data["owner_id"] : $userId,
@@ -74,6 +75,16 @@ class ChallengeModel extends Model
                 "original_post" => $data["uuid"] != "null" ? $data["uuid"] : null
             ]
         );
+
+        if($data["uuid"] == "null"){
+            // new original challenge getting create
+            User::updatePoints($userId, config("general.points.createChallenge"));
+        }else{
+            $originalCreator = ChallengeModel::select("owner_id")->where("uuid", $data["uuid"])->first();
+            User::updatePoints($userId, config("general.points.createChallenge"));
+            User::updatePoints($originalCreator["owner_id"], config("general.points.snapoff"));
+        }
+     
     }
 
     public static function totalChallenges($uuid){
