@@ -173,4 +173,71 @@ class AuthController extends Controller
             return $this->errorArray($ex->getMessage());
         }
     }
+
+    public function forgotPassword(Request $request)
+    {
+        try {
+            $data = $request->all();
+            $this->validateData($data, ["email" => "required"]);
+            $user = User::where("email", $data["email"])->first();
+            if($user == null){
+                return $this->errorArray("Email does not exists");
+            }else{
+                // process forgot password
+                $code = $this->fourDigitCode(4);
+                $user->id_code = $code;
+                $user->save();
+                $this->sendVerificationEmail($data["email"],$user["username"], $code); 
+                return $this->sendCustomResponse("Verification code sent", 200);
+            }
+
+            return $this->errorArray();
+
+        } catch(ValidationException $ex){
+            return $this->validationError($ex);
+        }catch (\Exception $ex) {
+            return $this->errorArray($ex->getMessage());
+        }
+    }
+
+    public function resetPassword(Request $request)
+    {
+        try {
+            $data = $request->all();
+            $this->validateData($data, ["email" => "required", 'password' => 'required|confirmed' ]);
+            $user = User::where("email", $data["email"])->first();
+            if($user){
+                $user->password = Hash::make($request->password);
+                $user->save();
+                return $this->sendCustomResponse("password updated", 200);
+            }
+            return $this->errorArray();
+        } catch(ValidationException $ex){
+            return $this->validationError($ex);
+        }catch (\Exception $ex) {
+            return $this->errorArray($ex->getMessage());
+        }
+    }
+
+    public function resendCode(Request $request)
+    {
+        try {
+            $data = $request->all();
+            $this->validateData($data, ["email" => "required" ]);
+            $user = User::where("email", $data["email"])->first();
+            if($user){
+                $code = $this->fourDigitCode(4);
+                $user->id_code = $code;
+                $user->save();
+                $this->sendVerificationEmail($data["email"],$user["username"], $code); 
+                return $this->sendCustomResponse("code sent", 200);
+            }
+            return $this->errorArray();
+        } catch(ValidationException $ex){
+            return $this->validationError($ex);
+        }catch (\Exception $ex) {
+            return $this->errorArray($ex->getMessage());
+        }
+    }
+    
 }
