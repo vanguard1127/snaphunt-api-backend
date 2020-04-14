@@ -15,10 +15,12 @@ trait DiscoverTrait{
         $users = User::where("username", "ilike", "%$query%")->where("uuid", "!=", $myUser["uuid"])->limit(3)->get();
         foreach($users as $user){
             $resp[] = [
-                "uuid" => $user["uuid"],
-                "username" => $user["username"],
-                "full_name" => $user["first_name"]. " ".$user["last_name"],
-                "avatar" => MediaHelper::getFullURL($user["avatar"]),
+                "owner" => [
+                    "id" => $user["uuid"],
+                    "username" => $user["username"],
+                    "name" => $user["first_name"]. " ".$user["last_name"],
+                    "avatar" => MediaHelper::getFullURL($user["avatar"]),
+                ],
                 "follow_status" => Friend::getFollowStatus($user["uuid"], $myUser["uuid"]),
                 "private" => UserSettings::isPrivate($user["uuid"]),
                 "followers_count" => Friend::totalFollowers($user["uuid"]),
@@ -48,10 +50,12 @@ trait DiscoverTrait{
         $users = User::where("username", "ilike", "%$query%")->where("uuid", "!=", $myUser["uuid"])->offset($offset)->limit($limit)->get();
         foreach($users as $user){
             $resp[] = [
-                "uuid" => $user["uuid"],
-                "username" => $user["username"],
-                "full_name" => $user["first_name"]. " ".$user["last_name"],
-                "avatar" => MediaHelper::getFullURL($user["avatar"]),
+                "owner" => [
+                    "id" => $user["uuid"],
+                    "username" => $user["username"],
+                    "name" => $user["first_name"]. " ".$user["last_name"],
+                    "avatar" => MediaHelper::getFullURL($user["avatar"]),
+                ],
                 "challenges" => $this->LastThreeChallenges($user),
                 "follow_status" => Friend::getFollowStatus($user["uuid"], $myUser["uuid"]),
                 "private" => UserSettings::isPrivate($user["uuid"]),
@@ -67,11 +71,25 @@ trait DiscoverTrait{
         $challenges = ChallengeModel::where("owner_id", $owner["uuid"])->orderBy("created_at", "DESC")->limit(3)->get();
         foreach($challenges as $challenge){
             $resp[] = [
-                "owner_name" => $owner["first_name"]." ".$owner["last_name"],
-                "avatar" => MediaHelper::getFullURL($owner["avatar"]),
+                "owner" => [ 
+                    "name" => $owner["first_name"]." ".$owner["last_name"],
+                    "username" => $owner["username"],
+                    "id" => $owner["uuid"],
+                    "avatar" => MediaHelper::getFullURL($owner["avatar"])
+                ],
                 "thumb" => MediaHelper::getFullURL($challenge["thumb"]),
-                "claps" => $challenge->claps->count(),
-                "uuid" => $challenge["uuid"]
+                "media" => MediaHelper::getFullURL($challenge["media"]),
+                "desc" => $challenge["description"],
+                "post_type" => $challenge["post_type"],
+                "claps" => ChallengeHelper::getClapCount($challenge->claps),
+                "comments" => $challenge->comments->count(),
+                "snapoff_count" => ChallengeHelper::snapOffCount($challenge["uuid"]),
+                "uuid" => $challenge["uuid"],
+                "category" => $challenge["category"],
+                "cat_name" => config("general.categories_admin")[$challenge["category"]],
+                "privacy" => $challenge["privacy"],
+                "is_snapoff" => $challenge["original_post"] !=null ? true : false,
+                "snapoffed" => ChallengeHelper::snapOffByUser($owner["uuid"], $challenge["uuid"])
             ];
         }
         return $resp;
