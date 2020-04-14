@@ -24,6 +24,15 @@ class MediaHelper{
         return $gifName;
     }
 
+    public static function generateThumb($video){
+        $frameName = time().".png";
+        $ffmpeg = FFMpeg::create();
+        $video = $ffmpeg->open(storage_path()."/app/uploads/".$video);
+        $frame = $video->frame(TimeCode::fromSeconds(1));
+        $frame->save(storage_path("app/uploads/").$frameName);
+        return $frameName;
+    }
+
     public static function compressVideo($videoName){
         //$mediaName = time()."mp4";
         $ffmpeg = FFMpeg::create();

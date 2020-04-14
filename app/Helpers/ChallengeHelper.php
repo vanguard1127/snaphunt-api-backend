@@ -6,10 +6,11 @@ use App\Models\ChallengeModel;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
+use Intervention\Image\Facades\Image;
 
 class ChallengeHelper
 {
-    public static function uploadToS3($media, $type, $thumbWidth = 540, $thumbHeight = 340 ){
+    public static function uploadToS3($media, $type, $thumbWidth = 120, $thumbHeight = 120 ){
         try{
             // save media to local disk first
             $mediaName = time().'_' . $media->getClientOriginalName();
@@ -18,25 +19,41 @@ class ChallengeHelper
                 Storage::disk('local')->put("uploads/".$mediaName, file_get_contents($media), "public");
                 // compress media
                 MediaHelper::compressVideo($mediaName);
-                $thumbName = MediaHelper::generateGif($mediaName, $thumbWidth, $thumbHeight);
-                Storage::disk('s3')->put($thumbName, file_get_contents(storage_path("app/uploads/gifs/").$thumbName) , "public");
+                // $thumbName = MediaHelper::generateGif($mediaName, $thumbWidth, $thumbHeight);
+                $videoFrame = MediaHelper::generateThumb($mediaName);
+                self::uploadImageTos3(Image::make(storage_path("app/uploads/").$videoFrame), $mediaName, $thumbName, $thumbWidth, $thumbHeight, "thumb");
+                // Storage::disk('s3')->put($thumbName, file_get_contents(storage_path("app/uploads/gifs/").$thumbName) , "public");
                 Storage::disk('s3')->put($mediaName, file_get_contents(storage_path("app/uploads/compressedData/").$mediaName) , "public");
                 // delete both mp4 file and gif
                 unlink(storage_path('app/uploads/'.$mediaName));
+                unlink(storage_path('app/uploads/'.$videoFrame));
                 unlink(storage_path('app/uploads/compressedData/'.$mediaName));
-                unlink(storage_path('app/uploads/gifs/'.$thumbName));
+                // unlink(storage_path('app/uploads/gifs/'.$thumbName));
             }else{
-                $thumb = MediaHelper::generateImageThumbnail($media, $thumbWidth, $thumbHeight);
-                $originalImage = MediaHelper::compressImage($media);
-                Storage::disk('s3')->put($thumbName, $thumb, "public");
-                Storage::disk('s3')->put($mediaName, $originalImage, "public");
+                // $originalImage = MediaHelper::compressImage($media);
+                // $thumb = MediaHelper::generateImageThumbnail($media, $thumbWidth, $thumbHeight);
+                // Storage::disk('s3')->put($mediaName, $originalImage, "public");
+                // Storage::disk('s3')->put($thumbName, $thumb, "public");
+                self::uploadImageTos3($media, $mediaName, $thumbName, $thumbWidth, $thumbHeight);
             }
+
             return [ "media_name" => $mediaName, "thumb_name" => $thumbName ];
         }catch(\Exception $ex){
             Log::info($ex);
             throw $ex;
           //  return $ex->getMessage();
            // return false;
+        }
+    }
+
+    public static function uploadImageTos3($media, $mediaName, $thumbName, $thumbWidth, $thumbHeight, $type = "full"){
+        $originalImage = MediaHelper::compressImage($media);
+        $thumb = MediaHelper::generateImageThumbnail($media, $thumbWidth, $thumbHeight);
+        if($type){
+            Storage::disk('s3')->put($mediaName, $originalImage, "public");
+            Storage::disk('s3')->put($thumbName, $thumb, "public");
+        }else{
+            Storage::disk('s3')->put($thumbName, $thumb, "public");
         }
     }
 
