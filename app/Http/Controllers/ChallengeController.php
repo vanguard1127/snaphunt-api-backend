@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\ChallengeHelper;
+use App\Helpers\MediaHelper;
 use App\Models\ChallengeModel;
 use App\Traits\ChallengeTrait;
 use Illuminate\Http\Request;
@@ -16,8 +17,9 @@ class ChallengeController extends Controller
             $data = $request->all();
             $user = $this->getAuthenticatedUser();
 
-            $width = isset($data["width"]) ? $data["width"] : 540;
-            $height = isset($data["height"]) ? $data["height"] : 340;
+            $width = isset($data["width"]) ? $data["width"] : 120;
+            $height = isset($data["height"]) ? $data["height"] : 120;
+
             $this->validateData($data, ChallengeModel::$createChallengeRules);
 
             if(isset($data["already_saved"]) && $data["already_saved"] == "true"){
@@ -92,7 +94,7 @@ class ChallengeController extends Controller
             $this->validateData($data, ["media" => "required", "post_type" => "required" ]);
             $resp = [];
             // $user = $this->getAuthenticatedUser();
-            if($mediaNames = $this->uploadToS3($data["media"], $data["post_type"], $data["width"], $data["height"])){
+            if($mediaNames = ChallengeHelper::uploadToS3($data["media"], $data["post_type"], $data["width"], $data["height"])){
                 $resp["media"] = $mediaNames["media_name"];
                 $resp["thumb"] = $mediaNames["thumb_name"];
                 return $this->sendData($resp);

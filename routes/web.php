@@ -23,6 +23,7 @@ $router->group(["prefix" => "api"], function() use($router) {
     $router->post('/user/forgotPassword', ['uses' => 'AuthController@forgotPassword']);
     $router->post('/user/resetPassword', ['uses' => 'AuthController@resetPassword']);
     $router->post('/resendCode', ['uses' => 'AuthController@resendCode']);
+    $router->post('/dev/save/challenge', ['uses' => 'DevController@saveChallenge']);
 });
 
 $router->group(["prefix" => "api", 'middleware' => 'jwt.auth'], function() use($router) {
