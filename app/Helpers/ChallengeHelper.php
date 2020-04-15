@@ -10,7 +10,7 @@ use Intervention\Image\Facades\Image;
 
 class ChallengeHelper
 {
-    public static function uploadToS3($media, $type, $thumbWidth = 120, $thumbHeight = 120 ){
+    public static function uploadToS3($media, $type, $thumbWidth = 250, $thumbHeight = 250 ){
         try{
             // save media to local disk first
             $mediaName = time().'_' . $media->getClientOriginalName();

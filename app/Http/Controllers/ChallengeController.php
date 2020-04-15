@@ -17,8 +17,8 @@ class ChallengeController extends Controller
             $data = $request->all();
             $user = $this->getAuthenticatedUser();
 
-            $width = isset($data["width"]) ? $data["width"] : 120;
-            $height = isset($data["height"]) ? $data["height"] : 120;
+            $width = isset($data["width"]) ? $data["width"] : 250;
+            $height = isset($data["height"]) ? $data["height"] : 250;
 
             $this->validateData($data, ChallengeModel::$createChallengeRules);
 
