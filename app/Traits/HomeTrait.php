@@ -17,6 +17,9 @@ trait HomeTrait{
         $posts = ChallengeModel::whereIn("owner_id", $followers)
           ->where("is_draft", false)
           ->where("type", "!=", "hunt")
+          ->orWhereHas("owner", function($sql){
+            $sql->where("type", 1);
+          })
           ->offset($offset)
           ->limit($limit)
           ->orderBy("created_at", "DESC")

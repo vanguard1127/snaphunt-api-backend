@@ -75,7 +75,7 @@ class ChallengeController extends Controller
             $data = $request->all();
             $this->validateData($data, ["uuid" => "required"]);
             $user = $this->getAuthenticatedUser();
-            if($challenge = ChallengeModel::where("uuid", $data["uuid"])->where("is_draft", true)->where("owner_id", $user["uuid"])->first()){
+            if($challenge = ChallengeModel::where("uuid", $data["uuid"])->where("owner_id", $user["uuid"])->first()){
                 Storage::disk('s3')->delete([$challenge["media"], $challenge["thumb"]]);
                 $challenge->delete();
                 return $this->sendCustomResponse("Draft deleted", 200);
