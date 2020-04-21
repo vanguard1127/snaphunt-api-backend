@@ -45,6 +45,14 @@ class Friend extends Model
         return static::where("follower_id", $uuid)->where("status","active")->pluck("following_id");
     }
 
+    public static function getFollowers($uuid, $limit, $offset){
+        return static::where("following_id", $uuid)->where("status","active")->with("follower")->limit($limit)->offset($offset)->get();
+    }
+
+    public static function getFollowings($uuid, $limit, $offset){
+        return static::where("follower_id", $uuid)->where("status","active")->with("following")->limit($limit)->offset($offset)->get();
+    }
+
     public static function myFriends($uuid, $limit, $offset){
         return static::where(function($sql) use($uuid){
             $sql->where("follower_id", $uuid)

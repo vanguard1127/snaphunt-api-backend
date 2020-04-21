@@ -61,4 +61,8 @@ $router->group(["prefix" => "api", 'middleware' => 'jwt.auth'], function() use($
     $router->post('/exponent/devices/subscribe', ['uses' => 'ExpoController@saveExpoToken']);
     $router->post('/exponent/devices/unsubscribe', ['uses' => 'ExpoController@removeExpoToken']);
     $router->get('/activities', ['uses' => 'ActivityController@getActivities']);
+
+    $router->get('/followers', ['uses' => 'FriendController@getFollowers']);
+    $router->get('/followings', ['uses' => 'FriendController@getFollowings']);
+
 });

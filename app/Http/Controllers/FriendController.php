@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\CommonHelper;
 use App\Helpers\MediaHelper;
 use App\Models\Friend;
 use App\Models\User;
@@ -104,6 +105,44 @@ class FriendController extends Controller
                     "first_name" => $friendObj["first_name"],
                     "last_name" => $friendObj["last_name"]
                 ];
+            }
+            return $this->sendData(array_values($resp));
+        } catch(ValidationException $ex){
+            return $this->validationError($ex);
+        }catch (\Exception $ex) {
+            return $this->errorArray($ex->getMessage());
+        }
+    }
+
+    public function getFollowers(Request $request){
+        try {
+            $data = $request->all();
+            $limit = isset($data["limit"]) ? $data["limit"] : 10;
+            $offset = isset($data["offset"]) ? $data["offset"] : 0;
+            $resp = [];
+            $user = $this->getAuthenticatedUser();
+            $friends = Friend::getFollowers($user["uuid"], $limit, $offset);
+            foreach($friends as $friend){
+                $resp[] = CommonHelper::prepareFriendObj($friend["follower"], $user);
+            }
+            return $this->sendData(array_values($resp));
+        } catch(ValidationException $ex){
+            return $this->validationError($ex);
+        }catch (\Exception $ex) {
+            return $this->errorArray($ex->getMessage());
+        }
+    }
+
+    public function getFollowings(Request $request){
+        try {
+            $data = $request->all();
+            $limit = isset($data["limit"]) ? $data["limit"] : 10;
+            $offset = isset($data["offset"]) ? $data["offset"] : 0;
+            $resp = [];
+            $user = $this->getAuthenticatedUser();
+            $friends = Friend::getFollowings($user["uuid"], $limit, $offset);
+            foreach($friends as $friend){
+                $resp[] = CommonHelper::prepareFriendObj($friend["following"], $user);
             }
             return $this->sendData(array_values($resp));
         } catch(ValidationException $ex){

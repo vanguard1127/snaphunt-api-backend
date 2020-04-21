@@ -49,7 +49,7 @@ class ChallengeHelper
     public static function uploadImageTos3($media, $mediaName, $thumbName, $thumbWidth, $thumbHeight, $type = "full"){
         $originalImage = MediaHelper::compressImage($media);
         $thumb = MediaHelper::generateImageThumbnail($media, $thumbWidth, $thumbHeight);
-        if($type){
+        if($type == "full"){
             Storage::disk('s3')->put($mediaName, $originalImage, "public");
             Storage::disk('s3')->put($thumbName, $thumb, "public");
         }else{
