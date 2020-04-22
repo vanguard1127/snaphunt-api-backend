@@ -30,7 +30,7 @@ class CommentsController extends Controller
             $data = $request->all();
             $this->validateData($data, Comments::$getCommentsRules);
             $resp = [];
-            $comments = Comments::where("post_id", $data["post_id"])->with("user")->orderBy("created_at", "DESC")->get();
+            $comments = Comments::where("post_id", $data["post_id"])->with("user")->orderBy("created_at", "ASC")->get();
             foreach($comments as $comment){
                 $resp[] = [
                     "avatar" => MediaHelper::getFullURL($comment["user"]["avatar"]),

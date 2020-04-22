@@ -46,7 +46,7 @@ class MediaHelper{
     }
 
     public static function compressImage($image){
-        return Image::make($image)
+        return Image::make($image)->orientate()
         ->resize(540, 960, function ($constraint) {
             $constraint->aspectRatio();
         })->encode('jpg',70);
