@@ -20,7 +20,7 @@ trait NotificationTrait{
             ];
             $count++;
         }
-        $resp["count"] = $count;
+        $resp["count"] = $count + $user->unreadNotifications()->where("type", "!=", "App\Notifications\FollowNotification")->count();
         return $resp;
     }
 }

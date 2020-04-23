@@ -62,31 +62,35 @@ class ChallengeHelper
         $resp = [];
         foreach($challenges as $challenge){
             $owner = $challenge->owner;
-            $resp[] = [
-                "owner" => [ 
-                    "name" => $owner["first_name"]." ".$owner["last_name"],
-                    "username" => $owner["username"],
-                    "id" => $owner["uuid"],
-                    "avatar" => MediaHelper::getFullURL($owner["avatar"])
-                ],
-                "thumb" => MediaHelper::getFullURL($challenge["thumb"]),
-                "media" => MediaHelper::getFullURL($challenge["media"]),
-                "desc" => $challenge["description"],
-                "post_type" => $challenge["post_type"],
-                "is_draft" => $challenge["is_draft"],
-                "claps" => self::getClapCount($challenge->claps),
-                "comments" => $challenge->comments->count(),
-                "snapoff_count" => self::snapOffCount($challenge["uuid"]),
-                "uuid" => $challenge["uuid"],
-                "category" => $challenge["category"],
-                "cat_name" => config("general.categories_admin")[$challenge["category"]],
-                "privacy" => $challenge["privacy"],
-                "is_snapoff" => $challenge["original_post"] !=null ? true : false,
-                "last_three" => $lastThree ? self::lastThreeSnapOff($challenge["uuid"]) : [],
-                "snapoffed" => ChallengeHelper::snapOffByUser($userId, $challenge["uuid"])
-            ];
+            $resp[] = self::singleChallenge($owner, $challenge, $userId, $lastThree);
         }
         return $resp;
+    }
+
+    public static function singleChallenge($owner, $challenge, $userId, $lastThree){
+        return [
+            "owner" => [ 
+                "name" => $owner["first_name"]." ".$owner["last_name"],
+                "username" => $owner["username"],
+                "id" => $owner["uuid"],
+                "avatar" => MediaHelper::getFullURL($owner["avatar"])
+            ],
+            "thumb" => MediaHelper::getFullURL($challenge["thumb"]),
+            "media" => MediaHelper::getFullURL($challenge["media"]),
+            "desc" => $challenge["description"],
+            "post_type" => $challenge["post_type"],
+            "is_draft" => $challenge["is_draft"],
+            "claps" => self::getClapCount($challenge->claps),
+            "comments" => $challenge->comments->count(),
+            "snapoff_count" => self::snapOffCount($challenge["uuid"]),
+            "uuid" => $challenge["uuid"],
+            "category" => $challenge["category"],
+            "cat_name" => config("general.categories_admin")[$challenge["category"]],
+            "privacy" => $challenge["privacy"],
+            "is_snapoff" => $challenge["original_post"] !=null ? true : false,
+            "last_three" => $lastThree ? self::lastThreeSnapOff($challenge["uuid"]) : [],
+            "snapoffed" => ChallengeHelper::snapOffByUser($userId, $challenge["uuid"])
+        ];
     }
 
     public static function snapOffCount($chId){

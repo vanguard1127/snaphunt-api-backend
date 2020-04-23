@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\MediaHelper;
+use App\Models\ChallengeModel;
 use App\Models\Comments;
+use App\Notifications\CommentNotification;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
@@ -14,7 +16,16 @@ class CommentsController extends Controller
             $data = $request->all();
             $this->validateData($data, Comments::$addCommentRules);
             $user = $this->getAuthenticatedUser();
-            if(Comments::addComment($data, $user["uuid"])){
+            if($newComment = Comments::addComment($data, $user["uuid"])){
+                $post = ChallengeModel::where("uuid", $newComment["post_id"])->with("owner")->first();
+                $title  = $user["username"]. " commented on your post!";
+                $message = $newComment["comments"];
+                $navData = [
+                    "route" => "DetailWithComments",
+                    "data" => [ "uuid" => $post["uuid"] ]
+                ];
+                $this->sendPushNotification($post["owner"], $title, $message, $navData);
+                $post->owner->notify(new CommentNotification($user["uuid"], $title, $message, $navData));
                 return $this->sendCustomResponse("Comment Added", 200);
             }
             return $this->errorArray();

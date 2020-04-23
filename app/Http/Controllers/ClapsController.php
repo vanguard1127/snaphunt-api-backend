@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\ChallengeHelper;
 use App\Models\ChallengeModel;
 use App\Models\Claps;
 use App\Models\User;
+use App\Notifications\ClapNotification;
 use Illuminate\Http\Request;
 
 class ClapsController extends Controller
@@ -14,7 +16,7 @@ class ClapsController extends Controller
             $data = $request->all();
             $this->validateData($data, Claps::$addClapRules);
             $user = $this->getAuthenticatedUser();
-            $post = ChallengeModel::where("uuid", $data["post_id"])->first();
+            $post = ChallengeModel::where("uuid", $data["post_id"])->with("owner")->first();
             if(Claps::where("post_id", $data["post_id"])->where("user_id", $user["uuid"])->first()){
                 // remove clap
                 Claps::where("post_id", $data["post_id"])->where("user_id", $user["uuid"])->delete();
@@ -23,6 +25,14 @@ class ClapsController extends Controller
                 }
             }else{
                 Claps::addClap($data["post_id"], $user["uuid"]);
+                $title  = $user["username"]. " clapped on your post!";
+                $message = "";
+                $navData = [
+                    "route" => "Detail",
+                    "data" => [ "data" => ChallengeHelper::singleChallenge($post["owner"], $post, $user["uuid"], false)]
+                ];
+                $this->sendPushNotification($post["owner"], $title, $message, $navData);
+                $post->owner->notify(new ClapNotification($user["uuid"], $title, $message, $navData));
                 if($post["owner_id"] != $user["uuid"]){
                     User::updatePoints($user["uuid"], config("general.points.clap"));
                 }
