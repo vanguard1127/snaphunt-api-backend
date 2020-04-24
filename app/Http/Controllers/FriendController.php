@@ -120,7 +120,11 @@ class FriendController extends Controller
             $limit = isset($data["limit"]) ? $data["limit"] : 10;
             $offset = isset($data["offset"]) ? $data["offset"] : 0;
             $resp = [];
-            $user = $this->getAuthenticatedUser();
+            if(isset($data["userId"]) && $data["userId"] != "null"){
+                $user = User::find($data["userId"]);
+            }else {
+                $user = $this->getAuthenticatedUser();
+            }
             $friends = Friend::getFollowers($user["uuid"], $limit, $offset);
             foreach($friends as $friend){
                 $resp[] = CommonHelper::prepareFriendObj($friend["follower"], $user);
@@ -139,7 +143,11 @@ class FriendController extends Controller
             $limit = isset($data["limit"]) ? $data["limit"] : 10;
             $offset = isset($data["offset"]) ? $data["offset"] : 0;
             $resp = [];
-            $user = $this->getAuthenticatedUser();
+            if(isset($data["userId"]) && $data["userId"] != "null"){
+                $user = User::find($data["userId"]);
+            }else {
+                $user = $this->getAuthenticatedUser();
+            }
             $friends = Friend::getFollowings($user["uuid"], $limit, $offset);
             foreach($friends as $friend){
                 $resp[] = CommonHelper::prepareFriendObj($friend["following"], $user);
