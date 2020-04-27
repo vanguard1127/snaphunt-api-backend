@@ -7,7 +7,7 @@ use App\Models\Friend;
 trait NotificationTrait{
 
     public function notifications($user){
-        $resp = [ "data" => [ [ "title" => "Follow Requests", "data" => []], [ "title" => "Suggesstions", "data" => [] ] ], "count" => 0];
+        $resp = [ "data" => [ [ "title" => "Follow Requests", "data" => []], [ "title" => "Suggesstions", "data" => [] ] ], "count" => 0, "unread_count" => 0];
         $count = 0;
         $pendingRequests = Friend::where("following_id", $user["uuid"])->where("status", "pending")->with("follower")->get();
 
@@ -21,6 +21,8 @@ trait NotificationTrait{
             $count++;
         }
         $resp["count"] = $count + $user->unreadNotifications()->where("type", "!=", "App\Notifications\FollowNotification")->count();
+        $resp["unread_count"] = $user->unreadNotifications()->where("type", "!=", "App\Notifications\FollowNotification")->count();
+
         return $resp;
     }
 }

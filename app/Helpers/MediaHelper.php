@@ -10,7 +10,7 @@ use Intervention\Image\Facades\Image;
 class MediaHelper{
 
     public static function generateImageThumbnail($image, $thumbWidth, $thumbHeight){
-        return Image::make($image)
+        return Image::make($image)->orientate()
         ->resize($thumbWidth, $thumbHeight, function ($constraint) {
             $constraint->aspectRatio();
         })->encode('jpg',70);
