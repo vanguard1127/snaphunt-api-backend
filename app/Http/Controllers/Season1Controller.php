@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\ChallengeHelper;
 use App\Helpers\MediaHelper;
 use App\Models\ChallengeModel;
 use Illuminate\Http\Request;
@@ -11,6 +12,7 @@ class Season1Controller extends Controller
     public function season1Data(Request $request){
         try {
             $data = $request->all();
+            $user = $this->getAuthenticatedUser();
             $limit = isset($data["limit"]) ? $data["limit"] : 10;
             $offset = isset($data["offset"]) ? $data["offset"] : 0;
 
@@ -22,7 +24,8 @@ class Season1Controller extends Controller
                     "media" => MediaHelper::getFullURL($ch["media"]),
                     "desc" => $ch["description"],
                     "category" => $ch["category"],
-                    "privacy" => $ch["privacy"]
+                    "privacy" => $ch["privacy"],
+                    "snapoffed" => ChallengeHelper::snapOffByUser($user["uuid"], $ch["uuid"]) ? true : false
                 ];
             }
             return $this->sendData($resp);
