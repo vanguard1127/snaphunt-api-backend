@@ -42,9 +42,9 @@
             19 => "Office",
         ],
         "points" => [
-            "clap" => 2,
-            "createChallenge" => 3,
-            "snapoff" => 5
+            "clap" => 0.5,
+            "createChallenge" => 1,
+            "snapoff" => 2
         ]
     ]
 
