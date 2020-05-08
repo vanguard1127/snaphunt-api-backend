@@ -26,7 +26,7 @@ class AuthController extends Controller
             $data['password'] = Hash::make($data['password']);
             $code = $this->fourDigitCode(4);
             $data['id_code'] = $code;
-            $data["dob"] = new Carbon($data["year"].'-'.$data["month"].'-'.$data["day"]);
+            // $data["dob"] = new Carbon($data["year"].'-'.$data["month"].'-'.$data["day"]);
             $user = User::create($data);
             if($user){
                 // send him verification email
@@ -146,6 +146,21 @@ class AuthController extends Controller
             return $this->errorArray($ex->getMessage());
         }
     }
+
+    public function appleLogin(Request $request){
+        try {
+            $data = $request->all();
+            if($token = $this->processAppleData($data)){
+                return $this->sendData(["access_token" => $token], 200);
+            }
+        //    return $this->errorArray("Invalid verification code", 400);
+        } catch(ValidationException $ex){
+            return $this->validationError($ex);
+        }catch (\Exception $ex) {
+            return $this->errorArray($ex->getMessage());
+        }
+    }
+
 
     public function authMe(Request $request){
         try {

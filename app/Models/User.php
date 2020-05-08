@@ -21,7 +21,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
      * @var array
      */
     protected $fillable = [
-        'first_name', 'last_name', 'username', 'email', 'avatar', 'dob', 'password', 'id_code', "fb_access_token", "fb_id"
+        'first_name', 'last_name', 'username', 'email', 'avatar', 'dob', 'password', 'id_code', "fb_access_token", "fb_id", "apple_identityToken"
     ];
 
     public static $signUpRules = [ 
@@ -30,9 +30,9 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         "username" => "required",
         "email" => "required|email|unique:users,email",
         "username" => "required|unique:users,username",
-        "day" => "required",
-        "month" => "required",
-        "year" => "required",
+        // "day" => "required",
+        // "month" => "required",
+        // "year" => "required",
         "password" => "required"
 
      ];
