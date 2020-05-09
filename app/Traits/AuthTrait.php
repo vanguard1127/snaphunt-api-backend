@@ -34,18 +34,27 @@ trait AuthTrait{
     }
 
     public function processAppleData($data){
-        $user = User::firstOrCreate(
-            ['email' => $data["email"]],
-            [
-            "first_name" => $data["fullName"]["givenName"],
-            "last_name" => $data["fullName"]["familyName"],
-            "username" => $this->random_username($data["fullName"]["givenName"]." ".$data["fullName"]["familyName"]),
-            "apple_identityToken" => $data["identityToken"],
-            "email" => $data["email"],
-            "status" => 1
-        ]);
-        if($user){
-            return JWTAuth::fromUser($user);
+
+        if(isset($data["appleToken"])){
+            $user = User::where("apple_identityToken", $data["appleToken"])->first();
+            if($user){
+                return JWTAuth::fromUser($user);
+            }
+            return false;
+        }else{
+            $user = User::firstOrCreate(
+                ['email' => $data["email"]],
+                [
+                "first_name" => $data["fullName"]["givenName"],
+                "last_name" => $data["fullName"]["familyName"],
+                "username" => $this->random_username($data["fullName"]["givenName"]." ".$data["fullName"]["familyName"]),
+                "apple_identityToken" => $data["user"],
+                "email" => $data["email"],
+                "status" => 1
+            ]);
+            if($user){
+                return JWTAuth::fromUser($user);
+            }
         }
         return false;
     }

@@ -150,6 +150,7 @@ class AuthController extends Controller
     public function appleLogin(Request $request){
         try {
             $data = $request->all();
+            
             if($token = $this->processAppleData($data)){
                 return $this->sendData(["access_token" => $token], 200);
             }
