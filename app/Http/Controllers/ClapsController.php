@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\ChallengeHelper;
+use App\Helpers\CommonHelper;
 use App\Models\ChallengeModel;
 use App\Models\Claps;
 use App\Models\User;
@@ -39,6 +40,26 @@ class ClapsController extends Controller
             }
             return $this->sendCustomResponse("Clap Added", 200);
             //return $this->errorArray();
+        } catch(ValidationException $ex){
+            return $this->validationError($ex);
+        }catch (\Exception $ex) {
+            return $this->errorArray($ex->getMessage());
+        }
+    }
+
+    public function clappedUsers(Request $request){
+        try {
+            $data = $request->all();
+            $this->validateData($data, [
+                "postId" => "required"
+            ]);
+            $resp = [];
+            $myUser = $this->getAuthenticatedUser();
+            $clappedUsers = Claps::where("post_id", $data["postId"])->with("user")->limit($data["limit"])->offset($data["offset"])->get();
+            foreach($clappedUsers as $user){
+                $resp[] = CommonHelper::prepareFriendObj($user["user"], $myUser);
+            }   
+            return $this->sendData($resp);
         } catch(ValidationException $ex){
             return $this->validationError($ex);
         }catch (\Exception $ex) {

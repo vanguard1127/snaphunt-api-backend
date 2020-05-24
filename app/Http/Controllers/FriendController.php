@@ -31,7 +31,6 @@ class FriendController extends Controller
                         $msg = "Follow request sent to ".$followingUser["username"];
                         $followingMsg = $user["username"]. " sent you follow request";
                         $this->sendPushNotification($followingUser, $user["username"], $followingMsg, ["route" => "ActivityScreen", "data" => []]);
-                        // $followingUser->notify(new FollowNotification($user->uuid, $followingMsg));
                     }else{
                         Friend::makeFriends($data["following_id"], $user["uuid"], "active");
                         $msg = "Started following ".$followingUser["username"];
@@ -44,6 +43,7 @@ class FriendController extends Controller
                     $followingMsg = $user["username"]. " started following you";
                     $this->sendPushNotification($followingUser, $user["username"], $followingMsg, ["route" => "Home", "data" => []]);
                 }
+                    $followingUser->notify(new FollowNotification($user->uuid, $followingMsg));
             }
             return $this->sendCustomResponse($msg, 200);
         } catch(ValidationException $ex){

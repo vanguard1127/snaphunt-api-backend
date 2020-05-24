@@ -68,6 +68,7 @@ $router->group(["prefix" => "api", 'middleware' => 'jwt.auth'], function() use($
     $router->get('/activities', ['uses' => 'ActivityController@getActivities']);
     $router->get('/only/activities', ['uses' => 'ActivityController@onlyActivities']);
     $router->post('/report', ['uses' => 'ReportController@report']);
+    $router->get('/clappedUsers', ['uses' => 'ClapsController@clappedUsers']);
 
 
 

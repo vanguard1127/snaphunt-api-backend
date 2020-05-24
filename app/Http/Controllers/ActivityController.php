@@ -32,7 +32,7 @@ class ActivityController extends Controller
             $notifications = $user->notifications()->offset($data["offset"])->limit($data["limit"])->get();
             foreach ($notifications as $notification) {
 
-                if($notification->type != "App\Notifications\FollowNotification" ){
+             //   if($notification->type != "App\Notifications\FollowNotification" ){
                     $notification->markAsRead();
                     $nData = $notification->data;
                     $sender = User::find($nData["sender_id"]);
@@ -49,7 +49,7 @@ class ActivityController extends Controller
                         "data" => $nData,
                         "ts" => $notification->created_at
                     ]; 
-                }
+                //}
             }
 
             return $this->sendData($activities);

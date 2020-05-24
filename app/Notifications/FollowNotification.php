@@ -30,7 +30,7 @@ class FollowNotification extends Notification
      */
     public function via($notifiable)
     {
-        return ['mail', 'database'];
+        return ['database'];
     }
 
     /**
@@ -41,9 +41,9 @@ class FollowNotification extends Notification
      */
     public function toMail($notifiable)
     {
-        return (new MailMessage)
-                    ->greeting("Follow Request!")
-                    ->line($this->msg);
+        // return (new MailMessage)
+        //             ->greeting("Follow Request!")
+        //             ->line($this->msg);
     }
 
     /**

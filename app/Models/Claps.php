@@ -16,6 +16,10 @@ class Claps extends Model
         "post_id" => "required"
     ];
 
+    public function user(){
+        return $this->belongsTo("App\Models\User", "user_id");
+    }
+
     public static function addClap($postId, $userId){
         return static::create(["post_id" => $postId, "user_id" => $userId]);
     }
