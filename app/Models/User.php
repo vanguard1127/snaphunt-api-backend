@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Helpers\MediaHelper;
 use App\Traits\UsesUuid;
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
@@ -91,6 +92,15 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
             return [];
         }
         return $users;
+    }
+
+    public static function prepareOwner($owner){
+        return [
+            "name" => $owner["first_name"]." ".$owner["last_name"],
+            "username" => $owner["username"],
+            "id" => $owner["uuid"],
+            "avatar" => MediaHelper::getFullURL($owner["avatar"])
+        ];
     }
     
 }

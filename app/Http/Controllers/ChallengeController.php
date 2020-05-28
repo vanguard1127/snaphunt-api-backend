@@ -88,6 +88,24 @@ class ChallengeController extends Controller
         }
     }
 
+    public function editPost(Request $request){
+        try {
+            $data = $request->all();
+            $this->validateData($data, ["postId" => "required"]);
+            $user = $this->getAuthenticatedUser();
+            if($challenge = ChallengeModel::where("uuid", $data["postId"])->where("owner_id", $user["uuid"])->first()){
+                $challenge->description = $data["desc"];
+                $challenge->save();
+                return $this->sendCustomResponse("post edited", 200);
+            }
+            return $this->sendCustomResponse("You are not authorised to do this.");
+        } catch(ValidationException $ex){
+            return $this->validationError($ex);
+        }catch (\Exception $ex) {
+            return $this->errorArray($ex->getMessage().$ex->getLine().$ex->getFile());
+        }
+    }
+
     public function uploadS3Api(Request $request){
         try {
             $data = $request->all();

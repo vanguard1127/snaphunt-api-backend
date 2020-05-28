@@ -21,8 +21,10 @@ class ProfileController extends Controller
 
             $this->validateData($data, [
                 "limit" => "required",
-                "offset" => "required"
+                "offset" => "required",
+                "type" => "required"
             ]);
+            $snapoffed = $data["type"] == 1 ? true : false;
             if(isset($data['id']) && $data["id"] != "null"){
                 $userId = $data['id'];
                 $requestStatus = Friend::getFollowStatus($userId, $authUser["uuid"]);
@@ -30,14 +32,21 @@ class ProfileController extends Controller
                 $userId = $authUser['uuid'];
             }
 
-            if($authUser["uuid"] == $userId){
+            if($authUser["uuid"] == $userId && !$snapoffed){
                 if($draftCount = ChallengeModel::selectRaw("COUNT(*) as drafts")->where("is_draft", true)->where("owner_id", $userId)->first()){
                     $drafts = $draftCount["drafts"];
                 }
             }
 
             if($data["offset"] > 0){
-                $challenges = ChallengeModel::where("owner_id", $userId)->limit($data["limit"])->offset($data["offset"])->orderBy("created_at", "desc")->get();
+                $challenges = ChallengeModel::where("owner_id", $userId);
+                if($snapoffed){
+                    $challenges = $challenges->where("original_post", "!=", null);
+                }else{
+                    $challenges = $challenges->where("original_post", null);
+                }
+                $challenges->limit($data["limit"])->offset($data["offset"])->orderBy("created_at", "desc")->get();
+
                 if($challenges){
                     $response = [
                         "challenges" => ChallengeHelper::prepareChallenges($challenges, $userId),
@@ -46,7 +55,12 @@ class ProfileController extends Controller
                 }
             }   
             else{
-                $user = User::where("uuid", $userId)->with(["challenges" => function($sql) use($data){
+                $user = User::where("uuid", $userId)->with(["challenges" => function($sql) use($data, $snapoffed){
+                    if($snapoffed){
+                        $sql = $sql->where("original_post", "!=", null);
+                    }else{
+                        $sql = $sql->where("original_post", null);
+                    }
                     $sql->limit($data["limit"])->offset(0)->orderBy("created_at", "desc");
                 }])->first();
 

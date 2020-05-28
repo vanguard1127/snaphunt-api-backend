@@ -18,16 +18,7 @@ class Season1Controller extends Controller
 
             $resp = [];
             $challenges = ChallengeModel::where("type", "season1")->offset($offset)->limit($limit)->orderBy("created_at", "ASC")->get();
-            foreach($challenges as $ch){
-                $resp[] = [
-                    "uuid" => $ch["uuid"],
-                    "media" => MediaHelper::getFullURL($ch["media"]),
-                    "desc" => $ch["description"],
-                    "category" => $ch["category"],
-                    "privacy" => $ch["privacy"],
-                    "snapoffed" => ChallengeHelper::snapOffByUser($user["uuid"], $ch["uuid"]) ? true : false
-                ];
-            }
+            $resp = ChallengeHelper::prepareChallenges($challenges, $user["uuid"]);
             return $this->sendData($resp);
         } catch(ValidationException $ex){
             return $this->validationError($ex);

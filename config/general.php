@@ -19,6 +19,7 @@
             15 => "Animals",
             16 => "Pranks",
             19 => "Office",
+            20 => "Nature"
         ],
         "categories_admin" => [
             18 => "General",
@@ -40,6 +41,7 @@
             16 => "Pranks",
             17 => "Season1",
             19 => "Office",
+            20 => "Nature"
         ],
         "points" => [
             "clap" => 0.5,

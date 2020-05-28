@@ -3,6 +3,7 @@
 namespace App\Helpers;
 
 use App\Models\ChallengeModel;
+use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
@@ -68,13 +69,9 @@ class ChallengeHelper
     }
 
     public static function singleChallenge($owner, $challenge, $userId, $lastThree){
-        return [
-            "owner" => [ 
-                "name" => $owner["first_name"]." ".$owner["last_name"],
-                "username" => $owner["username"],
-                "id" => $owner["uuid"],
-                "avatar" => MediaHelper::getFullURL($owner["avatar"])
-            ],
+        $isSnapoff = $challenge["original_post"] !=null ? true : false;
+        $data =  [
+            "owner" => User::prepareOwner($owner),
             "thumb" => MediaHelper::getFullURL($challenge["thumb"]),
             "media" => MediaHelper::getFullURL($challenge["media"]),
             "desc" => $challenge["description"],
@@ -87,10 +84,14 @@ class ChallengeHelper
             "category" => $challenge["category"],
             "cat_name" => config("general.categories_admin")[$challenge["category"]],
             "privacy" => $challenge["privacy"],
-            "is_snapoff" => $challenge["original_post"] !=null ? true : false,
+            "is_snapoff" => $isSnapoff,
             "last_three" => $lastThree ? self::lastThreeSnapOff($challenge["uuid"]) : [],
-            "snapoffed" => ChallengeHelper::snapOffByUser($userId, $challenge["uuid"])
+            "snapoffed" => ChallengeHelper::snapOffByUser($userId, $challenge["uuid"]),
         ];
+        if($isSnapoff){
+            $data["original_owner"] = ChallengeModel::getOriginalOwner($challenge["original_post"]);
+        }
+        return $data;
     }
 
     public static function snapOffCount($chId){

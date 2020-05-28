@@ -90,4 +90,14 @@ class ChallengeModel extends Model
     public static function totalChallenges($uuid){
         return static::where("owner_id", $uuid)->get()->count();
     }
+
+    public static function getOriginalOwner($uuid){
+        if($ch = self::where("uuid", $uuid)->with("owner")->first()){
+            if($ch->owner){
+                return User::prepareOwner($ch->owner);
+
+            }
+        }
+        return null;
+    }
 }
