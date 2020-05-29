@@ -45,13 +45,10 @@ class ProfileController extends Controller
                 }else{
                     $challenges = $challenges->where("original_post", null);
                 }
-                $challenges->limit($data["limit"])->offset($data["offset"])->orderBy("created_at", "desc")->get();
-
+                $challenges = $challenges->limit($data["limit"])->offset($data["offset"])->orderBy("created_at", "desc")->get();
                 if($challenges){
-                    $response = [
-                        "challenges" => ChallengeHelper::prepareChallenges($challenges, $userId),
-                    ];
-                    return $this->sendData($response);
+                        $response = ChallengeHelper::prepareChallenges($challenges, $userId);
+                        return $this->sendData($response);
                 }
             }   
             else{

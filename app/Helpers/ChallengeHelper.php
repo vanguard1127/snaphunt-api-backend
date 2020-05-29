@@ -131,6 +131,9 @@ class ChallengeHelper
     }
 
     public static function snapOffByUser($userId, $postId){
-        return ChallengeModel::where("owner_id", $userId)->where("original_post", $postId)->first();
+        if(ChallengeModel::where("owner_id", $userId)->where("original_post", $postId)->first()){
+            return true;
+        }
+        return false;
     }
 }
