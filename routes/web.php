@@ -70,5 +70,7 @@ $router->group(["prefix" => "api", 'middleware' => 'jwt.auth'], function() use($
     $router->post('/report', ['uses' => 'ReportController@report']);
     $router->get('/clappedUsers', ['uses' => 'ClapsController@clappedUsers']);
     $router->post('/editPost', ['uses' => 'ChallengeController@editPost']);
+    $router->post('/pinPost', ['uses' => 'ChallengeController@pinPost']);
+    $router->get('/pinPost', ['uses' => 'ChallengeController@getPinPost']);
 
 });

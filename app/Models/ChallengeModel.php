@@ -40,6 +40,15 @@ class ChallengeModel extends Model
         return $this->hasMany("App\Models\Comments", "post_id", "uuid");
     }
 
+    public function pin_post(){
+        return $this->hasMany("App\Models\PinPost", "post_id", "uuid");
+    }
+
+    public function org_post(){
+        return $this->hasOne("App\Models\ChallengeModel", "uuid", "original_post");
+    }
+
+
     public static $createChallengeRules = [
         "category" => "required",
         "privacy" => "required",

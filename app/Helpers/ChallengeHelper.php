@@ -136,4 +136,11 @@ class ChallengeHelper
         }
         return false;
     }
+
+    public static function preparePinnedPost($userId){
+        $posts = ChallengeModel::whereHas("pin_post", function($sql) use($userId){
+            $sql->where("user_id", $userId);
+        })->get();
+        return ChallengeHelper::prepareChallenges($posts, $userId);
+    }
 }

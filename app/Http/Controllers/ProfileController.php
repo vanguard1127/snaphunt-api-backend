@@ -24,7 +24,8 @@ class ProfileController extends Controller
                 "offset" => "required",
                 "type" => "required"
             ]);
-            $snapoffed = $data["type"] == 1 ? true : false;
+           // $snapoffed = $data["type"] == 1 ? true : false;
+            $notIn = [];
             if(isset($data['id']) && $data["id"] != "null"){
                 $userId = $data['id'];
                 $requestStatus = Friend::getFollowStatus($userId, $authUser["uuid"]);
@@ -32,31 +33,41 @@ class ProfileController extends Controller
                 $userId = $authUser['uuid'];
             }
 
-            if($authUser["uuid"] == $userId && !$snapoffed){
+            if($authUser["uuid"] == $userId && $data["type"] == 0){
                 if($draftCount = ChallengeModel::selectRaw("COUNT(*) as drafts")->where("is_draft", true)->where("owner_id", $userId)->first()){
                     $drafts = $draftCount["drafts"];
                 }
             }
 
-            if($data["offset"] > 0){
-                $challenges = ChallengeModel::where("owner_id", $userId);
-                if($snapoffed){
-                    $challenges = $challenges->where("original_post", "!=", null);
-                }else{
-                    $challenges = $challenges->where("original_post", null);
-                }
-                $challenges = $challenges->limit($data["limit"])->offset($data["offset"])->orderBy("created_at", "desc")->get();
-                if($challenges){
-                        $response = ChallengeHelper::prepareChallenges($challenges, $userId);
-                        return $this->sendData($response);
+            if($data["type"] == 0){
+                $notIn = ChallengeModel::select("uuid")->where("owner_id", $userId)->whereHas("org_post", function($sql){
+                    $sql->where("type", "user");
+                })->get();
+            }
+
+            if(isset($data["second"]) && $data["second"] == "true"){
+                if($data["type"] == 0 || $data["type"] == 1){
+                    $challenges = ChallengeModel::where("owner_id", $userId);
+                    if($data["type"] == 1){
+                        $challenges = $challenges->where("original_post", "!=", null)->where("category", "!=", 17);
+                    }else{
+                        $challenges = $challenges->whereNotIn("uuid",$notIn);
+                    }
+                    $challenges = $challenges->limit($data["limit"])->offset($data["offset"])->orderBy("created_at", "desc")->get();
+                    if($challenges){
+                            $response = ChallengeHelper::prepareChallenges($challenges, $userId);
+                            return $this->sendData($response);
+                    }
+                }else if ($data["type"] == 2){
+                    return $this->sendData(ChallengeHelper::preparePinnedPost($userId));
                 }
             }   
             else{
-                $user = User::where("uuid", $userId)->with(["challenges" => function($sql) use($data, $snapoffed){
-                    if($snapoffed){
-                        $sql = $sql->where("original_post", "!=", null);
+                $user = User::where("uuid", $userId)->with(["challenges" => function($sql) use($data, $notIn){
+                    if($data["type"] == 1){
+                        $sql->where("original_post", "!=", null)->where("category", "!=", 17);
                     }else{
-                        $sql = $sql->where("original_post", null);
+                        $sql->whereNotIn("uuid",$notIn);
                     }
                     $sql->limit($data["limit"])->offset(0)->orderBy("created_at", "desc");
                 }])->first();
@@ -65,9 +76,6 @@ class ProfileController extends Controller
                     $response = [
                         "uuid" => $user['uuid'],
                         "is_private" => UserSettings::isPrivate($user["uuid"]),
-                        // "username" => $user["username"],
-                        // "avatar" =>  MediaHelper::getFullURL($user["avatar"]),
-                        // "full_name" => $user['first_name']." ".$user["last_name"],
                         "challenges_count" => $user->challenges->count(),
                         "followers_count" => Friend::totalFollowers($user["uuid"]),
                         "followings_count" => Friend::totalFollowings($user["uuid"]),
@@ -77,7 +85,6 @@ class ProfileController extends Controller
                         "drafts" => $drafts,
                         "request_status" => $requestStatus
                     ];
-
                     return $this->sendData($response);
                 }
             }

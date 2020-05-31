@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Helpers\ChallengeHelper;
 use App\Helpers\MediaHelper;
 use App\Models\ChallengeModel;
+use App\Models\PinPost;
 use App\Traits\ChallengeTrait;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -118,6 +119,36 @@ class ChallengeController extends Controller
                 return $this->sendData($resp);
             }
             return $this->sendCustomResponse("You are not authorised to do this.");
+        } catch(ValidationException $ex){
+            return $this->validationError($ex);
+        }catch (\Exception $ex) {
+            return $this->errorArray($ex->getMessage().$ex->getLine().$ex->getFile());
+        }
+    }
+
+    public function pinPost(Request $request){
+        try {
+            $data = $request->all();
+            $this->validateData($data, ["post_id" => "required" ]);
+            $user = $this->getAuthenticatedUser();
+            if(PinPost::create([
+                "user_id" => $user["uuid"],
+                "post_id" => $data["post_id"]
+            ])){
+            return $this->sendCustomResponse("Successfully pinned post", 200);
+            }
+            return $this->sendCustomResponse();
+        } catch(ValidationException $ex){
+            return $this->validationError($ex);
+        }catch (\Exception $ex) {
+            return $this->errorArray($ex->getMessage().$ex->getLine().$ex->getFile());
+        }
+    }
+
+    public function getPinPost(Request $request){
+        try {
+            $user = $this->getAuthenticatedUser();
+            return $this->sendCustomResponse(ChallengeHelper::preparePinnedPost($user["uuid"]));
         } catch(ValidationException $ex){
             return $this->validationError($ex);
         }catch (\Exception $ex) {
