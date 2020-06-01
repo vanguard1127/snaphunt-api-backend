@@ -131,7 +131,7 @@ class ChallengeController extends Controller
             $data = $request->all();
             $this->validateData($data, ["post_id" => "required" ]);
             $user = $this->getAuthenticatedUser();
-            if(PinPost::create([
+            if(PinPost::firstOrCreate([
                 "user_id" => $user["uuid"],
                 "post_id" => $data["post_id"]
             ])){

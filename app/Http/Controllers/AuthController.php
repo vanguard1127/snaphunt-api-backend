@@ -75,7 +75,9 @@ class AuthController extends Controller
                     "thumb" => MediaHelper::getFullURL($user["thumb"]),
                     "username" => $user["username"],
                     "first_name" => $user["first_name"],
-                    "last_name" => $user["last_name"]
+                    "last_name" => $user["last_name"],
+                    "bio" => $user["bio"],
+                    "website" => $user["website"]
                      ], 200);
             }
             return $this->sendCustomResponse();
@@ -173,7 +175,9 @@ class AuthController extends Controller
                 "thumb" => MediaHelper::getFullURL($user["thumb"]),
                 "username" => $user["username"],
                 "first_name" => $user["first_name"],
-                "last_name" => $user["last_name"]
+                "last_name" => $user["last_name"],
+                "bio" => $user["bio"],
+                "website" => $user["website"]
                  ], 200);
         }catch (\Exception $ex) {
             return $this->errorArray($ex->getMessage());
