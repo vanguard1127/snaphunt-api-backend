@@ -29,7 +29,7 @@ class ClapsController extends Controller
                 $title  = $user["username"]. " clapped on your post!";
                 $message = "";
                 $navData = [
-                    "route" => "Detail",
+                    "route" => "SinglePost",
                     "data" => [ "data" => ChallengeHelper::singleChallenge($post["owner"], $post, $user["uuid"], false)]
                 ];
                 $this->sendPushNotification($post["owner"], $title, $message, $navData);
