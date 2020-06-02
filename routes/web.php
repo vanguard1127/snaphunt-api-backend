@@ -14,6 +14,7 @@
 $router->get('/', function () use ($router) {
     return $router->app->version();
 });
+$router->post('/stripe/webhook', ['uses' => 'PaymentController@webhook']);
 
 $router->group(["prefix" => "api"], function() use($router) {
     $router->post('/auth/register', ['uses' => 'AuthController@register']);
@@ -72,5 +73,6 @@ $router->group(["prefix" => "api", 'middleware' => 'jwt.auth'], function() use($
     $router->post('/editPost', ['uses' => 'ChallengeController@editPost']);
     $router->post('/pinPost', ['uses' => 'ChallengeController@pinPost']);
     $router->get('/pinPost', ['uses' => 'ChallengeController@getPinPost']);
+    $router->post('/subscribePremium', ['uses' => 'PaymentController@subscribePremium']);
 
 });

@@ -20,6 +20,7 @@
         "php-ffmpeg/php-ffmpeg": "dev-aac",
         "ramsey/uuid": "^3.9",
         "ramsey/uuid-doctrine": "^1.5",
+        "stripe/stripe-php": "^7.36",
         "tymon/jwt-auth": "^1.0@dev"
     },
     "require-dev": {

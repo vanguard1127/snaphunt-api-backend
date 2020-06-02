@@ -75,6 +75,8 @@ class ProfileController extends Controller
                 if($user){
                     $response = [
                         "uuid" => $user['uuid'],
+                        "bio" => $user['bio'],
+                        "website" => $user['website'],
                         "is_private" => UserSettings::isPrivate($user["uuid"]),
                         "challenges_count" => $user->challenges->count(),
                         "followers_count" => Friend::totalFollowers($user["uuid"]),
