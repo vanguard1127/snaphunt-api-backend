@@ -50,6 +50,20 @@ class PaymentController extends Controller
         }
     }
 
+    public function alreadySubscribed(){
+        try {
+            $user = $this->getAuthenticatedUser();
+            if( $user["stripe_id"] && StripeHelper::alreadySubscribed($user["stripe_id"])){
+                return $this->sendData(["subscribed" => true]);
+            }
+            return $this->sendData(["subscribed" => false]);
+        } catch(ValidationException $ex){
+            return $this->validationError($ex);
+        }catch (\Exception $ex) {
+            return $this->sendCustomResponse($ex->getMessage().$ex->getFile().$ex->getLine());
+        }
+    }
+
     public function webhook(Request $request){
         try {
             $event = \Stripe\Event::constructFrom(

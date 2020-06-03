@@ -177,7 +177,8 @@ class AuthController extends Controller
                 "first_name" => $user["first_name"],
                 "last_name" => $user["last_name"],
                 "bio" => $user["bio"],
-                "website" => $user["website"]
+                "website" => $user["website"],
+                "paid" => $user["paid"]
                  ], 200);
         }catch (\Exception $ex) {
             return $this->errorArray($ex->getMessage());

@@ -66,8 +66,10 @@ class ChallengeModel extends Model
         }
     }
 
-    public static function createChallenge($data, $userId){
+    public static function createChallenge($data, $user){
 
+        $userId = $user["uuid"];
+        $paid = $user["paid"];
         $obj =  static::create(
             [
                 "post_type" => $data["post_type"],
@@ -85,6 +87,14 @@ class ChallengeModel extends Model
             ]
         );
 
+        if($user["stripe_id"] == null){
+            $challengeCount = ChallengeModel::where("owner_id", $userId)->where("category", "!=", 17)->get()->count();
+            if($challengeCount>=10){
+                $paid = false;
+                User::where("uuid", $userId)->update(["paid" => false]);
+            }
+        }
+
         if($data["uuid"] == "null"){
             // new original challenge getting create
             User::updatePoints($userId, config("general.points.createChallenge"));
@@ -93,7 +103,7 @@ class ChallengeModel extends Model
             User::updatePoints($userId, config("general.points.createChallenge"));
             User::updatePoints($originalCreator["owner_id"], config("general.points.snapoff"));
         }
-     
+        return $paid;
     }
 
     public static function totalChallenges($uuid){

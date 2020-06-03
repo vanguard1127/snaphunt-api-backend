@@ -17,11 +17,13 @@ class ChallengeController extends Controller
         try {
             $data = $request->all();
             $user = $this->getAuthenticatedUser();
-
             $width = isset($data["width"]) ? $data["width"] : 250;
             $height = isset($data["height"]) ? $data["height"] : 250;
-
             $this->validateData($data, ChallengeModel::$createChallengeRules);
+
+            if($user["paid"] == false){
+                return $this->sendCustomResponse("You have created 10 free challenges, please subscribe to our monthly package.");
+            }
 
             if(isset($data["already_saved"]) && $data["already_saved"] == "true"){
 
@@ -39,8 +41,8 @@ class ChallengeController extends Controller
                     if($mediaNames = ChallengeHelper::uploadToS3($data["media"], $data["post_type"], $width, $height)){
                         $data["media"] = $mediaNames["media_name"];
                         $data["thumb"] = $mediaNames["thumb_name"];
-                        ChallengeModel::createChallenge($data, $user["uuid"]);
-                        return $this->sendCustomResponse("Challenge created", 200);
+                        $paid = ChallengeModel::createChallenge($data, $user);
+                        return $this->sendData(["paid" => $paid]);
                     }
                 }else{
                     return $this->errorArray($request->file("media")->getErrorMessage());
