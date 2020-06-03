@@ -66,9 +66,7 @@ class PaymentController extends Controller
 
     public function webhook(Request $request){
         try {
-            $event = \Stripe\Event::constructFrom(
-                json_decode($request->all(), true)
-            );
+            $event = \Stripe\Event::constructFrom($request->all());
             Log::info($event);
         } catch(\UnexpectedValueException $e) {
             // Invalid payload
