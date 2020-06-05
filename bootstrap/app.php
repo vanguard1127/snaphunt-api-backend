@@ -35,7 +35,7 @@ $app->configure("mail");
 $app->configure("auth");
 $app->configure('cors');
 $app->configure('general');
-
+$app->configure('sentry');
 /*
 |--------------------------------------------------------------------------
 | Register Container Bindings
@@ -96,7 +96,7 @@ $app->register(Barryvdh\Cors\ServiceProvider::class);
 $app->register(\Illuminate\Mail\MailServiceProvider::class);
 $app->register(Intervention\Image\ImageServiceProvider::class);
 $app->register(\Illuminate\Notifications\NotificationServiceProvider::class);
-
+$app->register(Sentry\Laravel\ServiceProvider::class);
 
 $app->alias('mailer',\Illuminate\Contracts\Mail\Mailer::class);
 

@@ -11,6 +11,10 @@
 |
 */
 
+Route::get('/debug-sentry', function () {
+    throw new Exception('My first Sentry error!');
+});
+
 $router->get('/', function () use ($router) {
     return $router->app->version();
 });
