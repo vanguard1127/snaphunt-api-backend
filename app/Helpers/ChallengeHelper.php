@@ -82,6 +82,7 @@ class ChallengeHelper
             "snapoff_count" => self::snapOffCount($challenge["uuid"]),
             "uuid" => $challenge["uuid"],
             "category" => $challenge["category"],
+            "ch_type" => self::getChallengeType($challenge, $owner),
             "cat_name" => config("general.categories_admin")[$challenge["category"]],
             "privacy" => $challenge["privacy"],
             "is_snapoff" => $isSnapoff,
@@ -92,6 +93,13 @@ class ChallengeHelper
             $data["original_owner"] = ChallengeModel::getOriginalOwner($challenge["original_post"]);
         }
         return $data;
+    }
+
+    public static function getChallengeType($ch, $owner){
+        if($ch["category"] == 17 && $owner["type"] == 1){
+            return "free";
+        }
+        return "paid";
     }
 
     public static function snapOffCount($chId){
