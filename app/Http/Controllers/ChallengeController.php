@@ -8,6 +8,7 @@ use App\Models\ChallengeModel;
 use App\Models\PinPost;
 use App\Traits\ChallengeTrait;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 
 class ChallengeController extends Controller
@@ -34,7 +35,7 @@ class ChallengeController extends Controller
                     "is_draft" => false
                 ]);
                 if($update){
-                    return $this->sendCustomResponse("Challenge created", 200);
+                    return $this->sendData(["paid" => ChallengeModel::freeStatus($user)]);
                 }
             }else{
                 if($request->file("media")->isValid()){
@@ -45,13 +46,16 @@ class ChallengeController extends Controller
                         return $this->sendData(["paid" => $paid]);
                     }
                 }else{
+                    Log::info($request->file("media")->getErrorMessage());
                     return $this->errorArray($request->file("media")->getErrorMessage());
                 }
             }
             return $this->errorArray();
         } catch(ValidationException $ex){
+            Log::info($ex);
             return $this->validationError($ex);
         }catch (\Exception $ex) {
+            Log::info($ex);
             return $this->errorArray($ex->getMessage().$ex->getLine().$ex->getFile());
         }
     }
