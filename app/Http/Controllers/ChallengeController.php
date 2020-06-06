@@ -23,6 +23,7 @@ class ChallengeController extends Controller
             $this->validateData($data, ChallengeModel::$createChallengeRules);
 
             if($user["paid"] == false){
+                Log::info("inside unpaid");
                 return $this->sendCustomResponse("You have created 10 free challenges, please subscribe to our monthly package.");
             }
 
@@ -35,6 +36,7 @@ class ChallengeController extends Controller
                     "is_draft" => false
                 ]);
                 if($update){
+                    Log::info("insie update");
                     return $this->sendData(["paid" => ChallengeModel::freeStatus($user)]);
                 }
             }else{
@@ -44,12 +46,15 @@ class ChallengeController extends Controller
                         $data["thumb"] = $mediaNames["thumb_name"];
                         $paid = ChallengeModel::createChallenge($data, $user);
                         return $this->sendData(["paid" => $paid]);
+                    }else{
+                        Log::info("photo didnt uploaded");
                     }
                 }else{
                     Log::info($request->file("media")->getErrorMessage());
                     return $this->errorArray($request->file("media")->getErrorMessage());
                 }
             }
+            Log::info("general error");
             return $this->errorArray();
         } catch(ValidationException $ex){
             Log::info($ex);
