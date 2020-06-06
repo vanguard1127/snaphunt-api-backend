@@ -22,10 +22,9 @@ class ChallengeController extends Controller
             $height = isset($data["height"]) ? $data["height"] : 250;
             $this->validateData($data, ChallengeModel::$createChallengeRules);
 
-            if($user["paid"] == false){
-                Log::info("inside unpaid");
-                return $this->sendCustomResponse("You have created 10 free challenges, please subscribe to our monthly package.");
-            }
+            // if($user["paid"] == false){
+            //     return $this->sendCustomResponse("You have created 10 free challenges, please subscribe to our monthly package.");
+            // }
 
             if(isset($data["already_saved"]) && $data["already_saved"] == "true"){
 
