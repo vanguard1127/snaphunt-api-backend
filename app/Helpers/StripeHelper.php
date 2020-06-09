@@ -49,7 +49,7 @@ class StripeHelper{
                 'items' => [
                     [
                         "price_data" => [
-                            "currency" => "USD",
+                            "currency" => "CAD",
                             "product" => $prod,
                             "recurring" => [
                                 "interval" => "month",
