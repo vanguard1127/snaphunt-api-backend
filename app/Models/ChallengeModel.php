@@ -25,7 +25,10 @@ class ChallengeModel extends Model
         "original_post",
         "type",
         "title",
-        "hunt_id"
+        "hunt_id",
+        "is_featured",
+        "featured_duration",
+        "featured_ends"
     ];
 
     public function owner(){
@@ -95,11 +98,14 @@ class ChallengeModel extends Model
                 "hunt_id" => (isset($data["hunt_id"]) && $data["hunt_id"] != "null") ? $data["hunt_id"] : null,
                 "type" => isset($data["type"]) ? $data["type"] : "user",
                 "title" => isset($data["title"]) ? $data["title"] : null,
-                "original_post" => $data["uuid"] != "null" ? $data["uuid"] : null
+                "original_post" => $data["uuid"] != "null" ? $data["uuid"] : null,
+                "is_featured" => $data["is_featured"],
+                "featured_duration" => $data["is_featured"] ? $data["featured_duration"] : null,
+                "status" => $data["is_featured"] ? 0 : 1
             ]
         );
 
-       $paid = self::freeStatus($user);
+    //    $paid = self::freeStatus($user);
 
         if($data["uuid"] == "null"){
             // new original challenge getting create

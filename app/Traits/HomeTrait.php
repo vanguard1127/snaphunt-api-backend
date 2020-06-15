@@ -16,6 +16,7 @@ trait HomeTrait{
         $followers[] = $user["uuid"];
         $posts = ChallengeModel::whereIn("owner_id", $followers)
           ->where("is_draft", false)
+          ->where("status", 1)
           ->where("type", "!=", "hunt")
           ->orWhereHas("owner", function($sql){
             $sql->where("type", 1);

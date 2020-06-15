@@ -9,7 +9,7 @@ class UserSettings extends Model
 {
     use UsesUuid;
     protected $fillable = [
-        'stop_all', 'sponsored_alert', 'followers_alert', "user_id", "disable_commenting", "private_account", "save_login", "sync_contacts", "auto_promote"
+        'stop_all', 'sponsored_alert', 'followers_alert', "user_id", "disable_commenting", "private_account", "save_login", "sync_contacts", "auto_promote", "featured"
     ];
 
     public static function createRow($userId){

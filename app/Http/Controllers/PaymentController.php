@@ -15,6 +15,7 @@ class PaymentController extends Controller
         try {
             $data = $request->all();
             $user = $this->getAuthenticatedUser();
+            $paid = $user["paid"];
             DB::beginTransaction();
             if($method = PaymentMethod::firstOrCreate(
                 ["user_id" => $user["uuid"]],
@@ -32,13 +33,15 @@ class PaymentController extends Controller
                     $customer = StripeHelper::createCustomer($user, $method["card_token"]);
                     $customerId = $customer["id"];
                     $user->stripe_id = $customer["id"];
+                    $user->paid = true;
                     $user->stripe_object = json_encode($customer);
                     $user->save();
+                    $paid = true;
                 }
                 // create subscription
-                StripeHelper::subscribeCustomer($customerId);
+                // StripeHelper::subscribeCustomer($customerId);
                 DB::commit();
-                return $this->sendCustomResponse("Subscribed successfully", 200);
+                return $this->sendData(["paid" => $paid]);
             }
             return $this->sendCustomResponse();
         } catch(ValidationException $ex){
@@ -53,7 +56,7 @@ class PaymentController extends Controller
     public function alreadySubscribed(){
         try {
             $user = $this->getAuthenticatedUser();
-            if( $user["stripe_id"] && StripeHelper::alreadySubscribed($user["stripe_id"])){
+            if( $user["stripe_id"]){
                 return $this->sendData(["subscribed" => true]);
             }
             return $this->sendData(["subscribed" => false]);

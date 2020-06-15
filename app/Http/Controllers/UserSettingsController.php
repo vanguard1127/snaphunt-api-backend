@@ -33,7 +33,7 @@ class UserSettingsController extends Controller
             $default = [
                 'stop_all', 'sponsored_alert', 'followers_alert', "user_id", "disable_commenting", "private_account", "save_login", "sync_contacts", "auto_promote"
             ];
-            $settings = UserSettings::select('stop_all', 'sponsored_alert', 'followers_alert', "disable_commenting", "private_account", "save_login", "sync_contacts", "auto_promote")->where("user_id", $user["uuid"])->first();
+            $settings = UserSettings::select('featured','stop_all', 'sponsored_alert', 'followers_alert', "disable_commenting", "private_account", "save_login", "sync_contacts", "auto_promote")->where("user_id", $user["uuid"])->first();
             if($settings == null){
                 return $default;
             }else{

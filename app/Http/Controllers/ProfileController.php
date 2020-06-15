@@ -34,20 +34,20 @@ class ProfileController extends Controller
             }
 
             if($authUser["uuid"] == $userId && $data["type"] == 0){
-                if($draftCount = ChallengeModel::selectRaw("COUNT(*) as drafts")->where("is_draft", true)->where("owner_id", $userId)->first()){
+                if($draftCount = ChallengeModel::selectRaw("COUNT(*) as drafts")->where("is_draft", true)->where("status", 1)->where("owner_id", $userId)->first()){
                     $drafts = $draftCount["drafts"];
                 }
             }
 
             if($data["type"] == 0){
-                $notIn = ChallengeModel::select("uuid")->where("owner_id", $userId)->whereHas("org_post", function($sql){
+                $notIn = ChallengeModel::select("uuid")->where("owner_id", $userId)->where("status", 1)->whereHas("org_post", function($sql){
                     $sql->where("type", "user");
                 })->get();
             }
 
             if(isset($data["second"]) && $data["second"] == "true"){
                 if($data["type"] == 0 || $data["type"] == 1){
-                    $challenges = ChallengeModel::where("owner_id", $userId);
+                    $challenges = ChallengeModel::where("owner_id", $userId)->where("status", 1);
                     if($data["type"] == 1){
                         $challenges = $challenges->where("original_post", "!=", null)->where("category", "!=", 17);
                     }else{
@@ -69,7 +69,7 @@ class ProfileController extends Controller
                     }else{
                         $sql->whereNotIn("uuid",$notIn);
                     }
-                    $sql->limit($data["limit"])->offset(0)->orderBy("created_at", "desc");
+                    $sql->where("status", 1)->limit($data["limit"])->offset(0)->orderBy("created_at", "desc");
                 }])->first();
 
                 if($user){

@@ -36,7 +36,7 @@ class ChallengeController extends Controller
                 ]);
                 if($update){
                     Log::info("insie update");
-                    return $this->sendData(["paid" => ChallengeModel::freeStatus($user)]);
+                    return $this->sendData(["paid" => $user["paid"]]);
                 }
             }else{
                 if($request->file("media")->isValid()){
