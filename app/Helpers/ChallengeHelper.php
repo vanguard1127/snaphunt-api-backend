@@ -85,6 +85,7 @@ class ChallengeHelper
             "ch_type" => self::getChallengeType($challenge, $owner),
             "cat_name" => config("general.categories_admin")[$challenge["category"]],
             "privacy" => $challenge["privacy"],
+            "is_featured" => $challenge["is_featured"],
             "is_snapoff" => $isSnapoff,
             "last_three" => $lastThree ? self::lastThreeSnapOff($challenge["uuid"]) : [],
             "snapoffed" => ChallengeHelper::snapOffByUser($userId, $challenge["uuid"]),

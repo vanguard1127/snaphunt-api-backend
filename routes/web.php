@@ -79,5 +79,6 @@ $router->group(["prefix" => "api", 'middleware' => 'jwt.auth'], function() use($
     $router->get('/pinPost', ['uses' => 'ChallengeController@getPinPost']);
     $router->post('/subscribePremium', ['uses' => 'PaymentController@subscribePremium']);
     $router->get('/subscribed', ['uses' => 'PaymentController@alreadySubscribed']);
+    $router->get('/featuredPosts', ['uses' => 'FeaturedController@featuredPosts']);
 
 });

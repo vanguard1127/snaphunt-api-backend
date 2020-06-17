@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Traits\UsesUuid;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Intervention\Image\Facades\Image;
 
@@ -28,7 +29,8 @@ class ChallengeModel extends Model
         "hunt_id",
         "is_featured",
         "featured_duration",
-        "featured_ends"
+        "featured_ends",
+        "featured_url"
     ];
 
     public function owner(){
@@ -49,6 +51,10 @@ class ChallengeModel extends Model
 
     public function org_post(){
         return $this->hasOne("App\Models\ChallengeModel", "uuid", "original_post");
+    }
+
+    public function featured_history(){
+        return $this->hasMany("App\Models\FeaturedHistory", "ch_id", "uuid");
     }
 
 
@@ -100,10 +106,19 @@ class ChallengeModel extends Model
                 "title" => isset($data["title"]) ? $data["title"] : null,
                 "original_post" => $data["uuid"] != "null" ? $data["uuid"] : null,
                 "is_featured" => $data["is_featured"],
-                "featured_duration" => $data["is_featured"] ? $data["featured_duration"] : null,
-                "status" => $data["is_featured"] ? 0 : 1
+                "featured_url" => $data["featured_url"] == "" ? null : $data["featured_url"],
+                "status" => $data["is_featured"] == "true" ? 0 : 1
             ]
         );
+
+        if($data["is_featured"] == "true"){
+            FeaturedHistory::create([
+                "user_id" => isset($data["owner_id"]) ? $data["owner_id"] : $userId,
+                "ch_id" => $obj["uuid"],
+                "duration" => $data["featured_duration"],
+                "featured_ends" => Carbon::now()->addWeeks($data["featured_duration"])
+            ]);
+        }
 
     //    $paid = self::freeStatus($user);
 
@@ -131,4 +146,9 @@ class ChallengeModel extends Model
         }
         return null;
     }
+
+    public static function snapOffedCount($chId){
+        $count = self::selectRaw("count(*)  as count")->where("original_post", $chId)->first();
+        return $count["count"];
+    }   
 }
