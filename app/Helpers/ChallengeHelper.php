@@ -11,7 +11,7 @@ use Intervention\Image\Facades\Image;
 
 class ChallengeHelper
 {
-    public static function uploadToS3($media, $type, $thumbWidth = 250, $thumbHeight = 250 ){
+    public static function uploadToS3($media, $type, $thumbWidth = 225, $thumbHeight = 400 ){
         try{
             // save media to local disk first
             $mediaName = time().'_' . $media->getClientOriginalName();
@@ -75,6 +75,7 @@ class ChallengeHelper
             "thumb" => MediaHelper::getFullURL($challenge["thumb"]),
             "media" => MediaHelper::getFullURL($challenge["media"]),
             "desc" => $challenge["description"],
+            "featured_url" => $challenge["featured_url"],
             "post_type" => $challenge["post_type"],
             "is_draft" => $challenge["is_draft"],
             "claps" => self::getClapCount($challenge->claps),
