@@ -64,7 +64,7 @@ trait DiscoverTrait{
                 if($i == 0){
                     $cat = ChallengeModel::withCount("claps")->where("status", 1)->orderBy("claps_count", "desc")->offset($categoryOffset)->limit($limit)->get();
                 }else{
-                    $cat = ChallengeModel::where("category", $i+1)->where("status", 1)->offset($categoryOffset)->limit($limit)->orderBy("thumb", 'DESC')->get();
+                    $cat = ChallengeModel::where("category", $i+1)->where("status", 1)->offset($categoryOffset)->limit($limit)->get();
                 }
                 $resp[] = ["title" => $categories[$i+1], "data" => ChallengeHelper::prepareChallenges($cat, $user["uuid"]), "category" => $i+1 ];
             }
@@ -86,7 +86,7 @@ trait DiscoverTrait{
         $resp = [];
         $categories = config("general.categories_admin");
         if(isset($categories[$categoryId])){
-            $cat = ChallengeModel::where("category", $categoryId)->where("status", 1)->orderBy("thumb", 'desc')->offset($offset)->limit($limit)->get();
+            $cat = ChallengeModel::where("category", $categoryId)->where("status", 1)->offset($offset)->limit($limit)->get();
             $resp = ChallengeHelper::prepareChallenges($cat, $user["uuid"]);
         }
         return $resp;
