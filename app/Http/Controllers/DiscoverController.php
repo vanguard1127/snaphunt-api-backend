@@ -70,7 +70,7 @@ class DiscoverController extends Controller
         }
     }
 
-    public function discoverData(Request $request){
+    public function discoverFlatData(Request $request){
         try {
             $data = $request->all();
             $this->validateData($data, ["cat_ids" => "required"]);
@@ -86,6 +86,21 @@ class DiscoverController extends Controller
         }
     }
 
+    public function discoverData(Request $request){
+        try {
+            $data = $request->all();
+            $user = $this->getAuthenticatedUser();
+            $offset = isset($data["offset"]) ? $data["offset"] : 0;
+            $limit = isset($data["limit"]) ? $data["limit"] : 4;
+            $resp = $this->prepareDiscoverData($user, $offset, $limit);
+            return $this->sendData($resp);
+        } catch(ValidationException $ex){
+            return $this->validationError($ex);
+        }catch (\Exception $ex) {
+            return $this->errorArray($ex->getMessage(). $ex->getLine(). $ex->getFile());
+        }
+    }
+
     public function categoryData(Request $request){
         try {
             $data = $request->all();
@@ -93,7 +108,7 @@ class DiscoverController extends Controller
             $this->validateData($data, ["category_id" => "required"]);
             $offset = isset($data["offset"]) ? $data["offset"] : 0;
             $limit = isset($data["limit"]) ? $data["limit"] : 3;
-            $resp = $this->prepareCategoryData($user["uuid"], $data["category_id"],$offset, $limit);
+            $resp = $this->prepareCategoryData($user, $data["category_id"],$offset, $limit);
             return $this->sendData($resp);
         } catch(ValidationException $ex){
             return $this->validationError($ex);

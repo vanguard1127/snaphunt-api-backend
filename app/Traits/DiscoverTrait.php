@@ -57,13 +57,13 @@ trait DiscoverTrait{
 
     public function prepareDiscoverData($user, $offset, $limit, $categoryOffset = 0){
         $resp = [];
-        $categories = config("general.categories");
-        for($i=$offset; $i <$offset + 4; $i++){
+        $categories = config("general.categories_admin");
+        for($i=$offset; $i <$offset + 8; $i++){
             if(isset($categories[$i+1])){
                 if($i == 0){
-                    $cat = ChallengeModel::withCount("claps")->where("status", 1)->orderBy("claps_count", "desc")->offset($categoryOffset)->limit($limit)->get();
+                    $cat = ChallengeModel::withCount("claps")->where("status", 1)->offset($categoryOffset)->limit($limit)->orderBy("created_at", 'DESC')->get();
                 }else{
-                    $cat = ChallengeModel::where("category", $i+1)->where("status", 1)->withCount("claps")->orderBy("claps_count", "desc")->offset($categoryOffset)->limit($limit)->get();
+                    $cat = ChallengeModel::where("category", $i+1)->where("status", 1)->withCount("claps")->offset($categoryOffset)->limit($limit)->orderBy("created_at", 'DESC')->get();
                 }
                 $resp[] = ["title" => $categories[$i+1], "data" => ChallengeHelper::prepareChallenges($cat, $user["uuid"]), "category" => $i+1 ];
             }
@@ -83,9 +83,9 @@ trait DiscoverTrait{
 
     public function prepareCategoryData($user, $categoryId, $offset, $limit){
         $resp = [];
-        $categories = config("general.categories");
+        $categories = config("general.categories_admin");
         if(isset($categories[$categoryId])){
-            $cat = ChallengeModel::where("category", $categoryId)->where("status", 1)->withCount("claps")->orderBy("claps_count", "desc")->offset($offset)->limit($limit)->get();
+            $cat = ChallengeModel::where("category", $categoryId)->where("status", 1)->withCount("claps")->offset($offset)->limit($limit)->orderBy("created_at", 'DESC')->get();
             $resp = ChallengeHelper::prepareChallenges($cat, $user["uuid"]);
         }
         return $resp;
