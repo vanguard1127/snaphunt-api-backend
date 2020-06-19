@@ -62,7 +62,7 @@ trait DiscoverTrait{
         for($i=$offset; $i <$offset + 8; $i++){
             if(isset($categories[$i+1])){
                 if($i == 0){
-                    $cat = ChallengeModel::withCount("claps")->where("status", 1)->orderBy("claps_count", "desc")->offset($categoryOffset)->limit($limit)->get();
+                    $cat = ChallengeModel::withCount("claps")->where("status", 1)->orderBy("claps_count", "desc")->orderBy("created_at", "desc")->offset($categoryOffset)->limit($limit)->get();
                 }else{
                     $cat = ChallengeModel::where("category", $i+1)->where("status", 1)->offset($categoryOffset)->limit($limit)->orderBy("thumb", 'DESC')->get();
                 }
@@ -73,11 +73,11 @@ trait DiscoverTrait{
     }
 
     public function prepareFlatDiscoverData($user, $offset, $limit, $categoryIds){
-        if($categoryIds == "all"){
-            $challenges =  ChallengeModel::where("status", 1)->orderBy("claps_count", "desc")->offset($offset)->limit($limit)->get();
+        if($categoryIds == 1){
+            $challenges =  ChallengeModel::withCount("claps")->where("status", 1)->orderBy("claps_count", "desc")->orderBy("created_at", "desc")->offset($offset)->limit($limit)->get();
         }else{
             // $catIds = explode(",",$categoryIds);
-            $challenges =  ChallengeModel::where("category", $categoryIds)->where("status", 1)->orderBy("claps_count", "desc")->offset($offset)->limit($limit)->get();
+            $challenges =  ChallengeModel::where("category", $categoryIds)->where("status", 1)->orderBy("thumb", "desc")->offset($offset)->limit($limit)->get();
         }
         return ChallengeHelper::prepareChallenges($challenges, $user["uuid"]);
     }
@@ -86,7 +86,11 @@ trait DiscoverTrait{
         $resp = [];
         $categories = config("general.categories_admin");
         if(isset($categories[$categoryId])){
-            $cat = ChallengeModel::where("category", $categoryId)->where("status", 1)->orderBy("thumb", 'desc')->offset($offset)->limit($limit)->get();
+            if($categoryId == 1){
+                $cat = ChallengeModel::withCount("claps")->where("status", 1)->offset($offset)->limit($limit)->orderBy("claps_count", "desc")->orderBy("created_at", "desc")->get();
+            }else{
+                $cat = ChallengeModel::where("category", $categoryId)->where("status", 1)->orderBy("thumb", 'desc')->offset($offset)->limit($limit)->get();
+            }
             $resp = ChallengeHelper::prepareChallenges($cat, $user["uuid"]);
         }
         return $resp;

@@ -80,5 +80,6 @@ $router->group(["prefix" => "api", 'middleware' => 'jwt.auth'], function() use($
     $router->post('/subscribePremium', ['uses' => 'PaymentController@subscribePremium']);
     $router->get('/subscribed', ['uses' => 'PaymentController@alreadySubscribed']);
     $router->get('/featuredPosts', ['uses' => 'FeaturedController@featuredPosts']);
+    $router->get('/flatCatData', ['uses' => 'DiscoverController@discoverFlatData']);
 
 });
