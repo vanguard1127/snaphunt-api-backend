@@ -60,11 +60,7 @@ trait DiscoverTrait{
         $categories = config("general.categories_admin");
         for($i=$offset; $i <$offset + 8; $i++){
             if(isset($categories[$i+1])){
-                if($i == 0){
-                    $cat = ChallengeModel::withCount("claps")->where("status", 1)->offset($categoryOffset)->limit($limit)->orderBy("created_at", 'DESC')->get();
-                }else{
-                    $cat = ChallengeModel::where("category", $i+1)->where("status", 1)->withCount("claps")->offset($categoryOffset)->limit($limit)->orderBy("created_at", 'DESC')->get();
-                }
+                $cat = ChallengeModel::where("category", $i+1)->where("status", 1)->withCount("claps")->offset($categoryOffset)->limit($limit)->orderBy("created_at", 'DESC')->get();
                 $resp[] = ["title" => $categories[$i+1], "data" => ChallengeHelper::prepareChallenges($cat, $user["uuid"]), "category" => $i+1 ];
             }
         }
