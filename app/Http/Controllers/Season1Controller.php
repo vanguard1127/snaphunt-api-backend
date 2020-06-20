@@ -15,9 +15,8 @@ class Season1Controller extends Controller
             $user = $this->getAuthenticatedUser();
             $limit = isset($data["limit"]) ? $data["limit"] : 10;
             $offset = isset($data["offset"]) ? $data["offset"] : 0;
-
             $resp = [];
-            $challenges = ChallengeModel::where("type", "season1")->offset($offset)->limit($limit)->orderBy("created_at", "ASC")->get();
+            $challenges = ChallengeModel::where("type", "season1")->offset($offset)->limit($limit)->orderBy("thumb", "ASC")->get();
             $resp = ChallengeHelper::prepareChallenges($challenges, $user["uuid"]);
             return $this->sendData($resp);
         } catch(ValidationException $ex){

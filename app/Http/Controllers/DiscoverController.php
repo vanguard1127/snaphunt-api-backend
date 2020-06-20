@@ -33,18 +33,22 @@ class DiscoverController extends Controller
             $userData = $this->prepareSearchUsers($data["query"], $user);
             $challengeData = $this->prepareSearchCallenges($data["query"], $user);
 
-            if($userData){
-                $resp[] = [
-                    "data" => $userData,
-                    "title" => "USERS"
-                ];
-            }
-
-            if($challengeData){
-                $resp[] = [
-                    "data" => $challengeData,
-                    "title" => "CHALLENGES"
-                ];
+            if(isset($data["detail"]) && $data["detail"] == "true" ){
+                $resp = $challengeData;
+            }else{
+                if($userData){
+                    $resp[] = [
+                        "data" => $userData,
+                        "title" => "USERS"
+                    ];
+                }
+    
+                if($challengeData){
+                    $resp[] = [
+                        "data" => $challengeData,
+                        "title" => "CHALLENGES"
+                    ];
+                }
             }
 
             return $this->sendData($resp);
