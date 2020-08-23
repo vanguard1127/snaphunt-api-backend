@@ -153,11 +153,10 @@ class AuthController extends Controller
     public function appleLogin(Request $request){
         try {
             $data = $request->all();
-            
             if($token = $this->processAppleData($data)){
                 return $this->sendData(["access_token" => $token], 200);
             }
-        //    return $this->errorArray("Invalid verification code", 400);
+           //return $this->errorArray("Invalid verification code", 400);
         } catch(ValidationException $ex){
             return $this->validationError($ex);
         }catch (\Exception $ex) {
