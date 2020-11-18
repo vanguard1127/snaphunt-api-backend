@@ -14,7 +14,7 @@ class DobNullable extends Migration
     public function up()
     {
         Schema::table('users', function($table) {
-            $table->date('dob')->nullable()->change();
+            $table->datetime('dob')->change()->nullable();
         });
     }
 

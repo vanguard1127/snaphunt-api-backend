@@ -1,6 +1,7 @@
 <?php
 namespace App\Helpers;
 
+use Doctrine\ORM\Query\Expr\Math;
 use FFMpeg\Coordinate\Dimension;
 use FFMpeg\Coordinate\TimeCode;
 use FFMpeg\FFMpeg;
@@ -37,9 +38,20 @@ class MediaHelper{
         //$mediaName = time()."mp4";
         $ffmpeg = FFMpeg::create();
         $video = $ffmpeg->open(storage_path()."/app/uploads/".$videoName);
+        $dimension = $video->getStreams()->videos()->first()->getDimensions();
+        $ratio = $dimension->getRatio();
+        $width = $dimension->getWidth();
+        $height = $dimension->getHeight();
+        if ($width > $height)
+        {
+            $temp = $width;
+            $width = $height;
+            $height = $temp;
+        }
+        $max_scale = min(540 / $width, 960 / $height);
         $video
         ->filters()
-        ->resize(new Dimension(540, 960))
+        ->resize(new Dimension($width * $max_scale, $height * $max_scale))
         ->synchronize();
         $video->save(new X264('aac', 'libx264'), storage_path("app/uploads/compressedData/").$videoName);
         return $videoName;

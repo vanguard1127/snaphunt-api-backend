@@ -24,7 +24,8 @@ class ChallengeHelper
                 $videoFrame = MediaHelper::generateThumb($mediaName);
                 self::uploadImageTos3(Image::make(storage_path("app/uploads/").$videoFrame), $mediaName, $thumbName, $thumbWidth, $thumbHeight, "thumb");
                 // Storage::disk('s3')->put($thumbName, file_get_contents(storage_path("app/uploads/gifs/").$thumbName) , "public");
-                Storage::disk('s3')->put($mediaName, file_get_contents(storage_path("app/uploads/compressedData/").$mediaName) , "public");
+                //Storage::disk('s3')->put($mediaName, file_get_contents(storage_path("app/uploads/compressedData/").$mediaName) , "public"); //TODO
+                Storage::disk('local')->put($mediaName, file_get_contents(storage_path("app/uploads/compressedData/").$mediaName) , "public");
                 // delete both mp4 file and gif
                 unlink(storage_path('app/uploads/'.$mediaName));
                 unlink(storage_path('app/uploads/'.$videoFrame));
@@ -54,7 +55,8 @@ class ChallengeHelper
             Storage::disk('s3')->put($mediaName, $originalImage, "public");
             Storage::disk('s3')->put($thumbName, $thumb, "public");
         }else{
-            Storage::disk('s3')->put($thumbName, $thumb, "public");
+            //Storage::disk('s3')->put($thumbName, $thumb, "public"); //TODO
+            Storage::disk('local')->put($thumbName, $thumb, "public");
         }
     }
 
@@ -107,7 +109,7 @@ class ChallengeHelper
     public static function snapOffCount($chId){
         $count = ChallengeModel::selectRaw("COUNT(*) as count")->where("original_post", $chId)->first();
         return $count["count"];
-    }   
+    }
 
     public static function prepareHuntChallenges($challenges){
         $resp = [];

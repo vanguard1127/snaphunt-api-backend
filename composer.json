@@ -4,9 +4,9 @@
     "keywords": ["framework", "laravel", "lumen"],
     "license": "MIT",
     "type": "project",
-    
+
     "require": {
-        "php": "^7.2",
+        "php": "^7.2.0",
         "alymosul/exponent-server-sdk-php": "^1.2",
         "barryvdh/laravel-cors": "^0.11.4",
         "doctrine/dbal": "^2.10",
@@ -25,9 +25,10 @@
         "tymon/jwt-auth": "^1.0@dev"
     },
     "require-dev": {
+        "barryvdh/laravel-ide-helper": "^2.8",
         "fzaninotto/faker": "^1.4",
-        "phpunit/phpunit": "^8.0",
-        "mockery/mockery": "^1.0"
+        "mockery/mockery": "^1.0",
+        "phpunit/phpunit": "^8.0"
     },
     "repositories": [
         {

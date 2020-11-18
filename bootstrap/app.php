@@ -1,7 +1,7 @@
 <?php
 
 use App\Http\Middleware\VerifyCsrfToken;
-
+use Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider;
 require_once __DIR__.'/../vendor/autoload.php';
 
 (new Laravel\Lumen\Bootstrap\LoadEnvironmentVariables(
@@ -97,7 +97,6 @@ $app->register(\Illuminate\Mail\MailServiceProvider::class);
 $app->register(Intervention\Image\ImageServiceProvider::class);
 $app->register(\Illuminate\Notifications\NotificationServiceProvider::class);
 $app->register(Sentry\Laravel\ServiceProvider::class);
-
 $app->alias('mailer',\Illuminate\Contracts\Mail\Mailer::class);
 
 /*

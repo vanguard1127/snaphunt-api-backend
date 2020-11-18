@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
 use Tymon\JWTAuth\Facades\JWTAuth;
-
+use Illuminate\Support\Facades\Log;
 class AuthController extends Controller
 {
     use AuthTrait;
@@ -31,7 +31,7 @@ class AuthController extends Controller
             $user = User::create($data);
             if($user){
                 // send him verification email
-                $this->sendVerificationEmail($data["email"],$data["username"], $code); 
+                $this->sendVerificationEmail($data["email"],$data["username"], $code);
                 return $this->sendCustomResponse("Verification code sent", 200);
             }
             return $this->errorArray();
@@ -57,7 +57,7 @@ class AuthController extends Controller
                 $originalImage = MediaHelper::compressImage($media);
                 Storage::disk('s3')->put($thumbName, $thumb, "public");
                 Storage::disk('s3')->put($mediaName, $originalImage, "public");
-                
+
                 if($user["avatar"] != "profile.png"){
                     Storage::disk('s3')->delete([$user["avatar"], $user["thumb"]]);
                 }
@@ -108,6 +108,7 @@ class AuthController extends Controller
     public function login(Request $request)
     {
         try {
+            Log::alert("abcdef");
            $data = $request->all();
            $name = $data["email"];
            $field = filter_var($name, FILTER_VALIDATE_EMAIL) ? 'email' : 'username';
@@ -122,6 +123,7 @@ class AuthController extends Controller
                // user is pending redirect to second step
                return $this->sendCustomResponse("Please verify account", 302);
            }
+
            return $this->sendData(["access_token" => $token]);
 
         } catch(ValidationException $ex){
@@ -130,7 +132,7 @@ class AuthController extends Controller
             return $this->errorArray('Token could not be generated');
         }catch (\Exception $ex) {
             return $this->errorArray($ex->getMessage());
-        } 
+        }
     }
 
     public function facebookLogin(Request $request){
@@ -180,7 +182,7 @@ class AuthController extends Controller
                 "bio" => $user["bio"],
                 "website" => $user["website"],
                 "paid" => $user["paid"],
-                "featured" => $settings["featured"]
+                //"featured" => $settings["featured"] TODO
                  ], 200);
         }catch (\Exception $ex) {
             return $this->errorArray($ex->getMessage());
@@ -210,7 +212,7 @@ class AuthController extends Controller
                 $code = $this->fourDigitCode(4);
                 $user->id_code = $code;
                 $user->save();
-                $this->sendVerificationEmail($data["email"],$user["username"], $code); 
+                $this->sendVerificationEmail($data["email"],$user["username"], $code);
                 return $this->sendCustomResponse("Verification code sent", 200);
             }
 
@@ -252,7 +254,7 @@ class AuthController extends Controller
                 $code = $this->fourDigitCode(4);
                 $user->id_code = $code;
                 $user->save();
-                $this->sendVerificationEmail($data["email"],$user["username"], $code); 
+                $this->sendVerificationEmail($data["email"],$user["username"], $code);
                 return $this->sendCustomResponse("code sent", 200);
             }
             return $this->errorArray();
@@ -262,5 +264,5 @@ class AuthController extends Controller
             return $this->errorArray($ex->getMessage());
         }
     }
-    
+
 }

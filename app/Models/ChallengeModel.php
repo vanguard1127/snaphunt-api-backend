@@ -19,7 +19,7 @@ class ChallengeModel extends Model
         "description",
         "category",
         "privacy",
-        "media", 
+        "media",
         "status",
         "is_draft",
         "thumb",
@@ -99,13 +99,13 @@ class ChallengeModel extends Model
                 "category" => self::getCategory($data["category"], isset($data["type"]) ? $data["type"] : "user"),
                 "privacy" => $data["privacy"],
                 "media" => $data["media"],
-                "is_draft" => $data["is_draft"],
+                "is_draft" => $data["is_draft"] == "false" ? 0: 1,
                 "thumb" => $data["thumb"],
                 "hunt_id" => (isset($data["hunt_id"]) && $data["hunt_id"] != "null") ? $data["hunt_id"] : null,
                 "type" => isset($data["type"]) ? $data["type"] : "user",
                 "title" => isset($data["title"]) ? $data["title"] : null,
                 "original_post" => $data["uuid"] != "null" ? $data["uuid"] : null,
-                "is_featured" => $data["is_featured"],
+                "is_featured" => $data["is_featured"] == "true" ? 1: 0,
                 "featured_url" => $data["featured_url"] == "" ? null : $data["featured_url"],
                 "status" => $data["is_featured"] == "true" ? 0 : 1
             ]
@@ -150,5 +150,5 @@ class ChallengeModel extends Model
     public static function snapOffedCount($chId){
         $count = self::selectRaw("count(*)  as count")->where("original_post", $chId)->first();
         return $count["count"];
-    }   
+    }
 }

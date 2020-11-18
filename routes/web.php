@@ -20,6 +20,7 @@ $router->get('/', function () use ($router) {
 });
 $router->post('/stripe/webhook', ['uses' => 'PaymentController@webhook']);
 
+
 $router->group(["prefix" => "api"], function() use($router) {
     $router->post('/auth/register', ['uses' => 'AuthController@register']);
     $router->post('/auth/verifyCode', ['uses' => 'AuthController@verifyCode']);
